@@ -6,3 +6,5 @@ https://docs.google.com/document/d/18n96PSDDcYZ8EuDilw_JOPdvNpwGiDgy4oBFMwD3bAs/
 Разрабатываем в своих ветках, которые делаем от `master`
 
 Название ветки: `<фамилия>/<таск>`, напр., `klochkovskiy/MODULE-1`
+
+Перед вливом в мастер делаем пр на проверку
