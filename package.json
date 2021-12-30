@@ -1,0 +1,27 @@
+{
+  "name": "csmoney-modules",
+  "version": "1.0.0",
+  "description": "Модули для ботов на cs.money",
+  "main": "index.js",
+  "scripts": {
+    "linter": "eslint **/*.js --fix",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TroExol/csmoney-modules.git"
+  },
+  "author": "TroExol, RomaKrav",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TroExol/csmoney-modules/issues"
+  },
+  "homepage": "https://github.com/TroExol/csmoney-modules#readme",
+  "dependencies": {
+    "axios": "^0.24.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.5.0",
+    "husky": "^7.0.4"
+  }
+}
