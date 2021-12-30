@@ -1,0 +1,95 @@
+{
+    "env": {
+        "es2021": true,
+        "node": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+        "ecmaVersion": 13,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true
+        }
+    },
+    "rules": {
+        "indent": [
+            "error",
+            4,
+            {
+                "SwitchCase": 1,
+                "ignoredNodes": [
+                    "JSXElement *"
+                ]
+            }
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "no-var": "error",
+        "global-require": "error",
+        "no-undef": "error",
+        "object-curly-spacing": ["error", "never"],
+        "array-bracket-spacing": ["error", "never"],
+        "key-spacing": [
+            "error",
+            {
+                "beforeColon": false,
+                "afterColon": true,
+                "mode": "strict"
+            }
+        ],
+        "space-in-parens": [
+            "error",
+            "never"
+        ],
+        "prefer-const": [
+            "error"
+        ],
+        "prefer-template": [
+            "error"
+        ],
+        "prefer-arrow-callback": [
+            "error"
+        ],
+        "arrow-parens": [
+            "error",
+            "as-needed"
+        ],
+        "comma-spacing": [
+            "error",
+            {
+                "before": false,
+                "after": true
+            }
+        ],
+        "no-multi-spaces": [
+            "error"
+        ],
+        "template-curly-spacing": [
+            "error",
+            "never"
+        ],
+        "newline-per-chained-call": [
+            "error",
+            {
+                "ignoreChainWithDepth": 2
+            }
+        ],
+        "one-var": [
+            "error",
+            "never"
+        ],
+        "one-var-declaration-per-line": [
+            "error",
+            "always"
+        ],
+        "curly": 2,
+        "brace-style": "error",
+        "id-length": "error"
+    }
+}
