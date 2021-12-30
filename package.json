@@ -4,7 +4,7 @@
   "description": "Модули для ботов на cs.money",
   "main": "index.js",
   "scripts": {
-    "linter": "eslint **/*.js --fix",
+    "linter": "eslint **/*.js --fix --no-error-on-unmatched-pattern",
     "prepare": "husky install"
   },
   "repository": {
