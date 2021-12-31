@@ -42,10 +42,10 @@ const myInventoryLoader = {
     
     /**
      * Удаление предмета из моего инвентаря
-     * @param {Object} item - Предмет
+     * @param {number} assetId - Id предмета
      */
-    remove (item) {
-        this.setItems(this._items.filter(({assetId}) => assetId !== item.assetId));
+    remove (assetId) {
+        this.setItems(this._items.filter(item => item.assetId !== assetId));
     },
     
     /**
@@ -71,7 +71,7 @@ const myInventoryLoader = {
      * @param {number} reloadMyInventoryTimeout - Таймаут перед обновлением списка
      * @returns {Promise<void>}
      */
-    async load (cookie, repeatLoad, reloadMyInventoryTimeout) {
+    async load (cookie, repeatLoad = false, reloadMyInventoryTimeout = 0) {
         // Повторный запуск обновления
         const startReload = () => repeatLoad &&
             setTimeout(() => this.load(cookie, repeatLoad, reloadMyInventoryTimeout), reloadMyInventoryTimeout);

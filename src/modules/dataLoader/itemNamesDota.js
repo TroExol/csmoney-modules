@@ -30,7 +30,7 @@ const itemNamesLoader = {
      * @param {number} reloadItemNamesTimeout - Таймаут перед обновлением списка
      * @returns {Promise<void>}
      */
-    async load (cookie, repeatLoad, reloadItemNamesTimeout) {
+    async load (cookie, repeatLoad = false, reloadItemNamesTimeout = 0) {
         // Повторный запуск обновления
         const startReload = () => repeatLoad &&
             setTimeout(() => this.load(cookie, repeatLoad, reloadItemNamesTimeout), reloadItemNamesTimeout);

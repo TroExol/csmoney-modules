@@ -29,7 +29,7 @@ const unavailableLoader = {
      * @param {number} reloadUnavailableTimeout - Таймаут перед обновлением списка
      * @returns {Promise<void>}
      */
-    async load (cookie, repeatLoad, reloadUnavailableTimeout) {
+    async load (cookie, repeatLoad = false, reloadUnavailableTimeout = 0) {
         // Повторный запуск обновления
         const startReload = () => repeatLoad &&
             setTimeout(() => this.load(cookie, repeatLoad, reloadUnavailableTimeout), reloadUnavailableTimeout);
