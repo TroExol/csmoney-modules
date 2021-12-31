@@ -1,14 +1,12 @@
-import balance from './balance';
-import itemNamesCsGo from './itemNamesCsGo';
-import itemNamesDota from './itemNamesDota';
-import myInventory from './myInventory';
-import overstock from './overstock';
-import unavailable from './unavailable';
+import balance from './balance.js';
+import itemNames from './itemNames.js';
+import myInventory from './myInventory.js';
+import overstock from './overstock.js';
+import unavailable from './unavailable.js';
 
 export {
     balance,
-    itemNamesCsGo,
-    itemNamesDota,
+    itemNames,
     myInventory,
     overstock,
     unavailable,
