@@ -5,6 +5,7 @@ import myInventory from './myInventory';
 import overstock from './overstock';
 import unavailable from './unavailable';
 import botInventory from './botInventory';
+import salesHistory from './salesHistory';
 
 export {
     balance,
@@ -14,4 +15,5 @@ export {
     overstock,
     unavailable,
     botInventory,
+    salesHistory,
 };
