@@ -4,6 +4,7 @@ import itemNamesDota from './itemNamesDota';
 import myInventory from './myInventory';
 import overstock from './overstock';
 import unavailable from './unavailable';
+import botInventory from './botInventory';
 
 export {
     balance,
@@ -12,4 +13,5 @@ export {
     myInventory,
     overstock,
     unavailable,
+    botInventory,
 };
