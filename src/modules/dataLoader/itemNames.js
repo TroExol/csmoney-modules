@@ -1,59 +1,51 @@
 import {get} from '../senders/index.js';
-import {isObject} from '../../helpers/index.js';
+import {defaultSetting} from '../../helpers/index.js';
 
 /**
- * Список названий предметов
+ * Список названий предметов.
  */
 const itemNamesLoader = {
-    730: undefined,
-    570: undefined,
-    
-    /**
-     * Изменение списка названий предметов
-     * @param {{nameId: {m: string}}} itemNames - Список названий предметов
-     */
-    set (appid, itemNames) {
-        this[appid] = itemNames;
+    nameId: {
+        730: undefined,
+        570: undefined,
     },
     
+    
     /**
-     * Получение названий предметов
+     * Получение названий предметов.
+     * @param {string | number} [appId] - id необходимой игры.  
      * @returns {{nameId: {m: string}} || undefined}
      */
-    get () {
-        return this._itemNames;
+    get (appId) {
+        return appId ? this.nameId[appId] : this.nameId;
     },
     
     /**
-     * Обновление названий предметов с сервера
-     * @param {array} appidList - Массив с id нужных игр. 
+     * Обновление названий предметов с сервера.
+     * 
      * @param {string} language - Выбор языка для предметов. (ru || en)
-     * @param {boolean} repeatLoad - Обновлять ли повторно
-     * @param {number} reloadItemNamesTimeout - Таймаут перед обновлением списка
+     * 
+     * @param {object} repeatLoad - Обновлять ли повторно.
+     * @param {boolean} repeatLoad.status - Обновлять ли повторно.
+     * @param {number} repeatLoad.delay - Таймаут перед обновлением списка.
+     * 
+     * @param {array} appIdList - Массив с id нужных игр. 
+     * 
      * @returns {Promise<void>}
      */
-    async load (appidList = [730, 570], language = 'en', repeatLoad = false, reloadItemNamesTimeout = 0) {
+    async load (language = defaultSetting.languageName, repeatLoad = defaultSetting.repeatLoad.itemNames, appIdList = defaultSetting.appIdList) {
         // Повторный запуск обновления
-        const startReload = () => repeatLoad &&
-            setTimeout(() => this.load(repeatLoad, reloadItemNamesTimeout), reloadItemNamesTimeout);
+        const startReload = () => repeatLoad.status &&
+            setTimeout(() => this.load(appIdList, language, repeatLoad), repeatLoad.delay);
         
         try {
-            for (let i = 0; i < appidList.length; i++) {
-                const appid = appidList[i];
+            for (const appId of appIdList) {
                 // Получение названий предмета
-                const response = await get(`https://old.cs.money/js/database-skins/library-${language}-${appid}.js`);
-                const itemNames = JSON.parse(response.split(' = ')[1]);
-
-                // Не удалось получить названия предметов
-                if (!itemNames || !isObject(itemNames)) {
-                    return;
-                }
-            
-                this.set(appid, itemNames);
-            }
-            
+                const response = await get(`https://old.cs.money/js/database-skins/library-${language}-${appId}.js`);
+                this.nameId[appId] = typeof response === 'string' ? JSON.parse(response.split(' = ')[1]) : {};
+            }  
         } catch (error) {
-            console.log('Ошибка при получении списка названий предметов CS:GO', error);
+            console.log('Ошибка при получении списка названий предметов CS:GO / DOTA2', error);
         } finally {
             startReload();
         }

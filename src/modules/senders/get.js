@@ -1,5 +1,5 @@
 import axios from 'axios';
-import getHeaders from './headers';
+import getHeaders from './headers.js';
 
 /**
  * GET запрос

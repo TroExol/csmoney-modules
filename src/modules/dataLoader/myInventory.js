@@ -1,117 +1,102 @@
-import {get} from '../senders';
-
+import {get} from '../senders/index.js';
+import {defaultSetting} from '../../helpers/index.js';
 /**
  * Мой инвентарь
  */
-const myInventoryLoader = {
+const myInventory = {
+
+    accounts: {},
     /**
-     * Предметы в инвентаре
-     * @type {Object[] || undefined}
+     * Добавление предмета в мой инвентарь.
+     * @param {string} keyAccounts - Ключ к нужному аккаунту.
+     * @param {object} item - Объект с данными предмета, который был получен через WS.
+     * @param {string | number} [appId] - id необходимой игры. 
      */
-    _items: undefined,
-    
-    /**
-     * Ошибка при запросе инвентаря
-     * @type {number || undefined}
-     */
-    _error: undefined,
-    
-    /**
-     * Изменение инвентаря
-     * @param {Object[]} items - Предметы
-     */
-    setItems (items) {
-        this._items = items;
-    },
-    
-    /**
-     * Изменение ошибки
-     * @param {number || undefined} error - Номер ошибки или ее отсутствие
-     */
-    setError (error) {
-        this._error = error;
-    },
-    
-    /**
-     * Добавление предмета в мой инвентарь
-     * @param {Object} item - Предмет
-     */
-    add (item) {
-        this._items.push(item);
+    add (keyAccount, item, appId) {
+        if (!this.accounts[keyAccount][item.appId || appId][item.o]) {
+            this.accounts[keyAccount][item.appId || appId][item.o] = {};
+        }
+        this.accounts[keyAccount][item.appId || appId][item.o][item.id[0]] = item;
     },
     
     /**
      * Удаление предмета из моего инвентаря
-     * @param {number} assetId - Id предмета
+     * 
+     * @param {string} keyAccounts - Ключ к нужному аккаунту.
+     * @param {object} item - Объект с данными предмета, который был получен через WS.
+     * @param {string | number} [appId] - id необходимой игры. 
      */
-    remove (assetId) {
-        this.setItems(this._items.filter(item => item.assetId !== assetId));
+    remove (keyAccount, item, appId) {
+        delete this.accounts[keyAccount][item.appId || appId][item.o][item];
     },
     
     /**
-     * Получение инвентаря
-     * @param {Boolean} showError - Показывать ли ошибки
-     * @returns {Object[] || {error: number || undefined, items: Object[] || undefined} || undefined}
+     * Получение инвентаря для всех аккаунтов.
+     * @param {string} [keyAccounts] - Ключ к нужному аккаунту..
+     * @returns {}
      */
-    get (showError) {
-        if (showError && this._error) {
-            return {
-                error: this._error,
-                items: this._items,
-            };
-        }
-        
-        return this._items;
+    get (keyAccount) {
+        return keyAccount ? this.accounts[keyAccount] : this.accounts;
     },
     
     /**
-     * Обновление инвентаря с сервера
-     * @param {string} cookie - Куки
-     * @param {Boolean} repeatLoad - Обновлять ли повторно
-     * @param {number} reloadMyInventoryTimeout - Таймаут перед обновлением списка
+     * Обновление инвентаря с сервера.
+     * @param {string} cookie - Куки файлы новой версии CSM.
+     * 
+     * @param {object} repeatLoad - Обновлять ли повторно.
+     * @param {boolean} repeatLoad.status - Обновлять ли повторно.
+     * @param {number} repeatLoad.delay - Таймаут перед обновлением инвентаря.
+     * 
+     * @param {array} appIdList - Массив с id нужных игр.
+     * 
+     * @param {array} requiredAccounts - Массив с ключами ко всем аккаунтам. .
+     * 
      * @returns {Promise<void>}
      */
-    async load (cookie, repeatLoad = false, reloadMyInventoryTimeout = 0) {
+    async load (cookie, repeatLoad = defaultSetting.repeatLoad.myinventory, appIdList = defaultSetting.appIdList, requiredAccounts = defaultSetting.keyAccounts) {
         // Повторный запуск обновления
-        const startReload = () => repeatLoad &&
-            setTimeout(() => this.load(cookie, repeatLoad, reloadMyInventoryTimeout), reloadMyInventoryTimeout);
+        const startReload = () => repeatLoad.status &&
+            setTimeout(() => this.load(cookie, repeatLoad, appIdList), repeatLoad.delay);
         
         try {
-            // Получение предметов в личном инвентаре
-            const items = await get(
-                'https://cs.money/3.0/load_user_inventory/730',
-                {
-                    limit: 60,
-                    noCache: true,
-                    offset: 0,
-                    order: 'desc',
-                    sort: 'price',
-                    withStack: true,
-                },
-                cookie,
-            );
-            
-            // Если ошибка с сервера истечения времени запроса инвентаря
-            if (items.error === 4) {
-                this.setError(4);
-                return;
+            for (const keyAccount of requiredAccounts) {
+                // Проверка на существования данных для нужного аккаунта.
+                if (!this.accounts[keyAccount]) {
+                    this.accounts[keyAccount] = {
+                        730: {},
+                        570: {}
+                    };
+                }
+
+                for (const appId of appIdList) {
+                    const getMyinventory = await get(`https://old.cs.money/${appId}/load_user_inventory`, null, cookie[keyAccount]);
+                    
+                    if (!Array.isArray(getMyinventory)) {
+                        // Обработка ошибки. (Надо доработать)
+                        if (getMyinventory.error) {
+                            this.accounts[keyAccount][appId].error = getMyinventory.error;
+                        }
+                    }
+                    // Инвентарь пуст.
+                    if (getMyinventory.length === 0) {
+                        this[keyAccount][appId] = {};
+                        return;
+                    }
+
+                    for (const item of getMyinventory) {
+                        // Отсеиваем предметы, которые находятся в инвентаре Steam.
+                        if (item.vi) {
+                            if (!this.accounts[keyAccount][appId][item.o]) {
+                                this.accounts[keyAccount][appId][item.o] = {};
+                            }
+                            // Разделяем одинаковые предметы.
+                            for (const id of item.id) {
+                                this.accounts[keyAccount][appId][item.o][id] = item;
+                            }
+                        }
+                    }
+                }
             }
-            
-            // Очищение ошибки
-            this.setError(undefined);
-            
-            // Не удалось получить предметы
-            if (!items.items) {
-                return;
-            }
-            
-            // Инвентарь пуст
-            if (!items.items.length > 0) {
-                this.setItems([]);
-                return;
-            }
-            
-            this.setItems(items.items);
         } catch (error) {
             console.log('Ошибка при обновлении инвентаря', error);
         } finally {
@@ -120,4 +105,5 @@ const myInventoryLoader = {
     },
 };
 
-export default myInventoryLoader;
+
+export default myInventory;
