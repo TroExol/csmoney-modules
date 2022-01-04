@@ -3,7 +3,7 @@ import {get} from '../senders/index.js';
 /**
  * Список названий предметов
  */
-const salesHistoryLoader = {
+const salesHistory = {
     730: undefined,
     570: undefined,
     
@@ -53,4 +53,4 @@ const salesHistoryLoader = {
     },
 };
 
-export default salesHistoryLoader;
+export default salesHistory;

@@ -16,7 +16,7 @@ const itemStatus = {
      */
     check(itemName, appId, limitOverstock = defaultSetting.limitOverstock) {
         return (!this.status[appId][itemName]) ? true : 
-            (this.status[appId][itemName] > limitOverstock) ? this.status[appId][itemName] : 
+            (this.status[appId][itemName] !== 'Unavailable' && this.status[appId][itemName] > limitOverstock) ? this.status[appId][itemName] : 
                 false;
     },
     /**
