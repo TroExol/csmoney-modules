@@ -40,7 +40,7 @@ const defaultSetting = {
     },
     /**
      * Установка значений по уолчанию.
-     * @param { object } setting 
+     * @param { object } setting - Настройки
      * @param { Array } setting.appIdList - Массив с id нужных игр. 
      * @param { string } setting.languageName - Выбор языка для предметов. (ru || en)
      * 

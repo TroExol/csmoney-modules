@@ -13,7 +13,7 @@ const itemNamesLoader = {
     
     /**
      * Получение названий предметов.
-     * @param {string | number} [appId] - id необходимой игры.  
+     * @param {number | string} [appId] - Массив с id нужных игр. 
      * @returns {{nameId: {m: string}} || undefined}
      */
     get (appId) {
@@ -29,7 +29,7 @@ const itemNamesLoader = {
      * @param {boolean} repeatLoad.status - Обновлять ли повторно.
      * @param {number} repeatLoad.delay - Таймаут перед обновлением списка.
      * 
-     * @param {array} appIdList - Массив с id нужных игр. 
+     * @param {array} appidList - Массив с id нужных игр. 
      * 
      * @returns {Promise<void>}
      */

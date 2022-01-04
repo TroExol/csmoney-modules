@@ -33,7 +33,7 @@ const myInventory = {
     /**
      * Получение инвентаря для всех аккаунтов.
      * @param {string} [keyAccounts] - Ключ к нужному аккаунту..
-     * @returns {}
+     * @returns {} - 
      */
     get (keyAccount) {
         return keyAccount ? this.accounts[keyAccount] : this.accounts;
