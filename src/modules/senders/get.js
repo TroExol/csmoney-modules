@@ -4,11 +4,11 @@ import getHeaders from './headers.js';
 /**
  * GET запрос
  * @param {string} path - Ссылка для запроса
- * @param {Object} params - Параметры запроса
- * @param {string} cookie - Куки
+ * @param {Object || null} params - Параметры запроса
+ * @param {string || null} cookie - Куки
  * @returns {Promise<any>} - Результат запроса
  */
-const get = async (path, params, cookie) => {
+const get = async (path, params = null, cookie = null) => {
     try {
         const {data} = await axios.get(path, {
             params,
