@@ -49,8 +49,8 @@ const itemStatus = {
                 const unavailable = await get(`https://cs.money/list_unavailable?appId=${appId}`);
 
                 // Не удалось получить overstock и unavailable
-                if (!overstocks || !Array.isArray(overstocks) && !unavailable || !Array.isArray(unavailable)) {
-                    return;
+                if ((!overstocks || !Array.isArray(overstocks)) || (!unavailable || !Array.isArray(unavailable))) {
+                    continue;
                 }
 
                 for (const item of unavailable) {

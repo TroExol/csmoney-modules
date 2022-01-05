@@ -36,7 +36,7 @@ const itemNamesLoader = {
     async load (language = defaultSetting.languageName, repeatLoad = defaultSetting.repeatLoad.itemNames, appIdList = defaultSetting.appIdList) {
         // Повторный запуск обновления
         const startReload = () => repeatLoad.status &&
-            setTimeout(() => this.load(appIdList, language, repeatLoad), repeatLoad.delay);
+            setTimeout(() => this.load(language, repeatLoad, appIdList), repeatLoad.delay);
         
         try {
             for (const appId of appIdList) {

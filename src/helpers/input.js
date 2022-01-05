@@ -1,5 +1,9 @@
 import readline from 'readline';
-
+/**
+ * 
+ * @param {string} question - Строка, которая будет выводиться в консоль.
+ * @returns {Promise<void>}
+ */
 const input = async question => {
     return new Promise(resolve => {
         const rl = readline.createInterface({
