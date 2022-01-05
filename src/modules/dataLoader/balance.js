@@ -13,7 +13,7 @@ const myBalance = {
      * @param {number} amount - Сумма
      */
     decrease (keyAccounts, amount) {
-        this.accounts[keyAccounts] += amount;
+        this.accounts[keyAccounts] -= amount;
     },
     
     /**
@@ -51,7 +51,7 @@ const myBalance = {
     async load (cookie, repeatLoad = defaultSetting.repeatLoad.balance, requiredAccounts = defaultSetting.keyAccounts) {
         // Повторный запуск обновления
         const startReload = () => repeatLoad.status &&
-            setTimeout(() => this.load(cookie, repeatLoad), repeatLoad.delay);
+            setTimeout(() => this.load(cookie, repeatLoad, requiredAccounts), repeatLoad.delay);
         
         try {
             for (const keyAccount of requiredAccounts) {
@@ -60,7 +60,6 @@ const myBalance = {
 
                 // Не удалось получить баланс
                 if (!userInfo.balance && userInfo.balance !== 0) {
-                    startReload();
                     return;
                 }
                 this.accounts[keyAccount] = userInfo.balance;

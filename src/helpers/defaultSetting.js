@@ -63,27 +63,22 @@ const defaultSetting = {
      * @param { number } setting.repeatLoad.balance.delay - Время задержки перед повторным обновлением.
      */
 
-    set(setting) {
-        // Получаем список нужных настроек, которые нужно изменить
-        const events = Object.keys(setting);
-
-        // Цикл для применения настроек 
-        for (let indexEvents = 0; indexEvents < events.length; indexEvents++) {
-            const event = events[indexEvents];
-            if (!isObject(setting[event])) {
-                this[event] = setting[event];
+    set(settings) {
+        // Изменяем нужные настройки
+        Object.entries(settings).forEach(([settingKey, settingData]) => {
+            // Если в настройке нет вложенных объектов
+            if (!isObject(settingData)) {
+                this[settingKey] = settingData;
             } else {
-                const eventElements = Object.keys(setting[event]);
-                // Цикл на случай, если настройка является объектом 
-                for (let indexEventElements = 0; indexEventElements < eventElements.length; indexEventElements++) {
-                    const element = eventElements[indexEventElements];
-                    if (setting[event][element].status && setting[event][element].delay) {
-                        this[event][element] = setting[event][element];
+                // Изменяем внутри нужных настроек
+                Object.entries(settingData).forEach(([entrySettingKey, entrySettingData]) => {
+                    if (settingKey === 'repeatLoad' && (!entrySettingData.status || !entrySettingData.delay)) {
+                        throw new Error('Для настройки repeatLoad необходимо установить поля status и delay');
                     }
-                }
+                    this[settingKey][entrySettingKey] = entrySettingData;
+                });
             }
-            
-        }
+        });
     }
 };
 
