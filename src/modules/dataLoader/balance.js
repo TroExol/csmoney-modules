@@ -1,65 +1,69 @@
-import {get} from '../senders';
+import {get} from '../senders/index.js';
+import {defaultSetting} from '../../helpers/index.js';
 
 /**
  * Мой баланс
  */
-const myBalanceLoader = {
-    _balance: undefined,
-    
-    /**
-     * Изменение баланса
-     * @param {number} balance - Баланс
-     */
-    set (balance) {
-        this._balance = balance;
-    },
+const myBalance = {
+    accounts: {},
     
     /**
      * Уменьшение баланса
+     * @param {string} keyAccounts - Ключ к нужному аккаунту.
      * @param {number} amount - Сумма
      */
-    decrease (amount) {
-        this._balance -= amount;
+    decrease (keyAccounts, amount) {
+        this.accounts[keyAccounts] -= amount;
     },
     
     /**
      * Увеличение баланса
+     * @param {string} keyAccounts - Ключ к нужному аккаунту.
      * @param {number} amount - Сумма
      */
-    increase (amount) {
-        this._balance += amount;
+    increase (keyAccounts, amount) {
+        this.accounts[keyAccounts] += amount;
     },
     
     /**
      * Получение баланса
+     * @param {string} [keyAccounts] - Ключ к нужному аккаунту.
      * @returns {number || undefined}
      */
-    get () {
-        return this._balance;
+    get (keyAccounts) {
+        return keyAccounts ? this.accounts[keyAccounts] : this.accounts;
     },
     
     /**
      * Обновление баланса с сервера
      * @param {string} cookie - Куки
-     * @param {Boolean} repeatLoad - Обновлять ли повторно
-     * @param {number} reloadMyBalanceTimeout - Таймаут перед обновлением баланса
+     * 
+     * @param {object} repeatLoad - Обновлять ли повторно
+     * @param {boolean} repeatLoad.status - Обновлять ли повторно 
+     * @param {number} repeatLoad.delay - Таймаут перед обновлением списка
+     * 
+     * @param {array} appIdList - Массив с id нужных игр. 
+     * 
+     * @param {array} requiredAccounts - Массив с ключами ко всем аккаунтам нужных игр. 
+     * 
      * @returns {Promise<void>}
      */
-    async load (cookie, repeatLoad = false, reloadMyBalanceTimeout = 0) {
+    async load (cookie, repeatLoad = defaultSetting.repeatLoad.balance, requiredAccounts = defaultSetting.keyAccounts) {
         // Повторный запуск обновления
-        const startReload = () => repeatLoad &&
-            setTimeout(() => this.load(cookie, repeatLoad, reloadMyBalanceTimeout), reloadMyBalanceTimeout);
+        const startReload = () => repeatLoad.status &&
+            setTimeout(() => this.load(cookie, repeatLoad, requiredAccounts), repeatLoad.delay);
         
         try {
-            // Получение баланса
-            const balance = await get('https://old.cs.money/user_info', null, cookie);
-            // Не удалось получить баланс
-            if (!balance.balance) {
-                startReload();
-                return;
+            for (const keyAccount of requiredAccounts) {
+                // Получение баланса
+                const userInfo = await get('https://old.cs.money/user_info', null, cookie[keyAccount]);
+
+                // Не удалось получить баланс
+                if (!userInfo.balance && userInfo.balance !== 0) {
+                    continue;
+                }
+                this.accounts[keyAccount] = userInfo.balance;
             }
-            
-            this.set(balance.balance);
         } catch (error) {
             console.log('Ошибка при обновлении баланса', error);
         } finally {
@@ -68,4 +72,4 @@ const myBalanceLoader = {
     },
 };
 
-export default myBalanceLoader;
+export default myBalance;
