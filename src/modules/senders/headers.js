@@ -1,3 +1,8 @@
+/**
+ * Формирует заголовки запроса на cs.money
+ * @param cookie - Куки
+ * @returns {Object}
+ */
 const getHeaders = cookie => ({
     'accept': 'application/json, text/plain, */*',
     'accept-language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',

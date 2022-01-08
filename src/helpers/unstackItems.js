@@ -1,9 +1,8 @@
 /**
- * // Ра
- * @param {object} item 
- * @param {number} appId 
+ * // Разбитие стакнутых предметов на new.cs.money
+ * @param {object} item - Предмет
+ * @param {number} appId - Id игры
  */
-
 const unstackItems = (item, appId) => {
     const listItems = [];
     for (let index = 0; index < item.id.length; index++) {
@@ -20,10 +19,10 @@ const unstackItems = (item, appId) => {
             'l': item.l ? [item.l[index]] : null,
             'lt': item.lt || null,
             'ss': item.ss ? [item.ss[index]] : null,
-            appId
+            appId,
         });
     }
-
+    
     return listItems;
 };
 

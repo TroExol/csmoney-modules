@@ -7,5 +7,5 @@ export {
     isObject,
     input,
     unstackItems,
-    defaultSetting
+    defaultSetting,
 };

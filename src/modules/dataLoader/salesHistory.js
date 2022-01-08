@@ -3,15 +3,19 @@ import {get} from '../senders/index.js';
 /**
  * Список названий предметов
  */
-const salesHistory = {
-    730: undefined,
-    570: undefined,
+export const salesHistory = ({
+    console,
+    get,
+    Date,
+}) => ({
+    730: {},
+    570: {},
     
     /**
      * Получение названий предметов
      * @param {number} appId - Id игры
      * @param {number} itemNameId - Id названия предмета
-     * @returns {Object[]} - История продаж
+     * @returns {Promise<Object[]>} - История продаж
      */
     async get (appId, itemNameId) {
         return this[appId][itemNameId] && this[appId][itemNameId].timeLoad >= Date.now() - 24 * 60 * 60000
@@ -51,6 +55,10 @@ const salesHistory = {
             return [];
         }
     },
-};
+});
 
-export default salesHistory;
+export default salesHistory({
+    console,
+    get,
+    Date,
+});

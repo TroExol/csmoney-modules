@@ -4,8 +4,11 @@
   "description": "Модули для ботов на cs.money",
   "main": "index.js",
   "scripts": {
-    "linter": "eslint src/ --ext .js --fix --no-error-on-unmatched-pattern",
-    "prepare": "husky install"
+    "linter": "eslint src/ --ext .js --fix",
+    "prepare": "husky install",
+    "update-snapshots": "ava reset-cache && ava --update-snapshots",
+    "test-development": "ava reset-cache && ava --watch",
+    "test": "c8 ava"
   },
   "repository": {
     "type": "git",
@@ -23,7 +26,27 @@
     "ws": "^8.4.0"
   },
   "devDependencies": {
+    "ava": "^4.0.0",
+    "c8": "^7.11.0",
     "eslint": "^8.5.0",
     "husky": "^7.0.4"
+  },
+  "ava": {
+    "files": [
+      "src/**/*.test.js"
+    ],
+    "snapshotDir": "__snapshots__",
+    "timeout": "1m"
+  },
+  "c8": {
+    "all": true,
+    "check-coverage": true,
+    "branches": 100,
+    "lines": 100,
+    "functions": 100,
+    "statements": 100,
+    "include": [
+      "src/**/*.js"
+    ]
   }
 }
