@@ -125,6 +125,18 @@ Test('Успешная загрузка баланса с повторной з�
     
     await injectedBalance.load({key: 'cookie'}, {status: true, delay: 60000}, ['key']);
     
+    const loadParams = injectedBalance.load.toString()
+        .split(/\s/)
+        .join('')
+        .match(/(?<=load\s*\().+?(?=\))/)[0].split(',').map(param => param.split('=')[0].trim());
+    const recursiveLoadParams = dispatches.find(dispatch => dispatch[0] === 'setTimeout')[1]
+        .split(/\s/)
+        .join('')
+        .match(/(?<=load\s*\().+?(?=\))/)[0].split(',')
+        .map(param => param.split('=')[0].trim());
+    
+    t.deepEqual(loadParams, recursiveLoadParams);
+    
     dispatches.push(['balance', injectedBalance.accounts.key]);
     
     t.deepEqual(dispatches, [

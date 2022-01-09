@@ -118,6 +118,18 @@ Test('Успешная загрузка названий с повторной �
     
     await injectedItemNames.load('en', {status: true, delay: 60000}, [730]);
     
+    const loadParams = injectedItemNames.load.toString()
+        .split(/\s/)
+        .join('')
+        .match(/(?<=load\s*\().+?(?=\))/)[0].split(',').map(param => param.split('=')[0].trim());
+    const recursiveLoadParams = dispatches.find(dispatch => dispatch[0] === 'setTimeout')[1]
+        .split(/\s/)
+        .join('')
+        .match(/(?<=load\s*\().+?(?=\))/)[0].split(',')
+        .map(param => param.split('=')[0].trim());
+    
+    t.deepEqual(loadParams, recursiveLoadParams);
+    
     dispatches.push(['itemNames', injectedItemNames.nameId]);
     
     t.deepEqual(dispatches, [
