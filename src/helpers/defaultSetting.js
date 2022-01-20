@@ -6,6 +6,22 @@ const defaultSetting = {
      */
     keyAccounts: ['account'],
     /**
+     * @type {Object<string, boolean>} - Включена ли покупка для аккаунтов.
+     */
+    isBuyOn: {
+        account: true,
+    },
+    /**
+     * @type {Object<string, boolean>} - Включена ли покупка для аккаунтов при перезагрузке ботов.
+     */
+    isBuyOnWhileRefreshBots: {
+        account: true,
+    },
+    /**
+     * @type {string[]} - Предметы, которые не покупать.
+     */
+    blacklist: [],
+    /**
      * @type {array} - Массив с id нужных игр.
      */
     appIdList: [570, 730],
@@ -17,6 +33,43 @@ const defaultSetting = {
      * @type {number} - Допустимый предел оверстока.
      */
     limitOverstock: -6,
+    /**
+     * @type {Object<string, number>} - Комиссия аккаунтов на продажу.
+     */
+    commission: {
+        account: 7,
+    },
+    /**
+     * @type {{notOverstock: number, overstock: number}} - Минимальный профит при покупке.
+     */
+    profit: {
+        notOverstock: 10,
+        overstock: 16,
+    },
+    /**
+     * @type {number} - Задержка перед подключением к WS (в миллисекундах).
+     */
+    delayReconnectWS: 60000,
+    /**
+     * @type {number} - Максимальное количество параллельных покупок.
+     */
+    maxCountParallelsBuying: 1,
+    /**
+     * @type {number} - Длительность рекурсивной покупки (в миллисекундах).
+     */
+    buyRecursivelyDuration: 30000,
+    /**
+     * @type {number} - Периодичность отправки запросов рекурсивной покупки (в миллисекундах).
+     */
+    buyRecursivelyFrequency: 4000,
+    /**
+     * @type {number} - За какое время считать количество неудачных запросов (в миллисекундах).
+     */
+    badQueriesTime: 15 * 60000,
+    /**
+     * @type {number} - Максимальное количество неудачных запросов за определенное время.
+     */
+    maxBadQueriesByTime: 27,
     /**
      * @type {object} - Объект с настройками обновлений данных.
      */

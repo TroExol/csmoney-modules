@@ -6,6 +6,55 @@ Test('Должна присутствовать дефолтная настро�
     t.assert(defaultSetting.keyAccounts);
 });
 
+Test('Должна присутствовать дефолтная настройка isBuyOn', t => {
+    t.assert(defaultSetting.isBuyOn);
+    t.assert(defaultSetting.isBuyOn.account === true);
+});
+
+Test('Должна присутствовать дефолтная настройка isBuyOnWhileRefreshBots', t => {
+    t.assert(defaultSetting.isBuyOnWhileRefreshBots);
+    t.assert(defaultSetting.isBuyOnWhileRefreshBots.account === true);
+});
+
+Test('Должна присутствовать дефолтная настройка blacklist', t => {
+    t.assert(defaultSetting.blacklist);
+});
+
+Test('Должна присутствовать дефолтная настройка commission', t => {
+    t.assert(defaultSetting.commission);
+    t.assert(defaultSetting.commission.account === 7);
+});
+
+Test('Должна присутствовать дефолтная настройка profit', t => {
+    t.assert(defaultSetting.profit);
+    t.assert(defaultSetting.profit.notOverstock === 10);
+    t.assert(defaultSetting.profit.overstock === 16);
+});
+
+Test('Должна присутствовать дефолтная настройка delayReconnectWS', t => {
+    t.assert(defaultSetting.delayReconnectWS);
+});
+
+Test('Должна присутствовать дефолтная настройка maxCountParallelsBuying', t => {
+    t.assert(defaultSetting.maxCountParallelsBuying);
+});
+
+Test('Должна присутствовать дефолтная настройка buyRecursivelyDuration', t => {
+    t.assert(defaultSetting.buyRecursivelyDuration);
+});
+
+Test('Должна присутствовать дефолтная настройка buyRecursivelyFrequency', t => {
+    t.assert(defaultSetting.buyRecursivelyFrequency);
+});
+
+Test('Должна присутствовать дефолтная настройка badQueriesTime', t => {
+    t.assert(defaultSetting.badQueriesTime);
+});
+
+Test('Должна присутствовать дефолтная настройка maxBadQueriesByTime', t => {
+    t.assert(defaultSetting.maxBadQueriesByTime);
+});
+
 Test('Должна присутствовать дефолтная настройка appIdList', t => {
     t.assert(defaultSetting.appIdList);
 });
