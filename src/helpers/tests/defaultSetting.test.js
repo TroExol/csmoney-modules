@@ -95,6 +95,18 @@ Test('Должна присутствовать дефолтная настро�
     t.assert(defaultSetting.repeatLoad.balance.delay === 0);
 });
 
+Test('Должна присутствовать дефолтная настройка repeatLoad.transactions', t => {
+    t.assert(defaultSetting.repeatLoad.transactions);
+    t.assert(defaultSetting.repeatLoad.transactions.status === false);
+    t.assert(defaultSetting.repeatLoad.transactions.delay === 0);
+});
+
+Test('Должна присутствовать дефолтная настройка repeatLoad.purchases', t => {
+    t.assert(defaultSetting.repeatLoad.purchases);
+    t.assert(defaultSetting.repeatLoad.purchases.status === false);
+    t.assert(defaultSetting.repeatLoad.purchases.delay === 0);
+});
+
 Test('Установка настроек работает верно', t => {
     const dispatches = [];
     

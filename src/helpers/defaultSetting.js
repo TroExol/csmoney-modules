@@ -90,6 +90,14 @@ const defaultSetting = {
             status: false,
             delay: 0,
         },
+        transactions: {
+            status: false,
+            delay: 0,
+        },
+        purchases: {
+            status: false,
+            delay: 0,
+        },
     },
     /**
      * Установка значений по умолчанию.

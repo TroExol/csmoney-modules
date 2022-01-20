@@ -97,7 +97,7 @@ export const myInventory = ({
      *
      * @param {array} appIdList - Массив с id нужных игр.
      *
-     * @param {array} requiredAccounts - Массив с ключами ко всем аккаунтам. .
+     * @param {array} requiredAccounts - Массив с ключами ко всем аккаунтам.
      *
      * @returns {Promise<void>}
      */
