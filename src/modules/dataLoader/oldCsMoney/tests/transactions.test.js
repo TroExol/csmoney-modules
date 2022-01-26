@@ -44,26 +44,59 @@ Test('Получение списка offerId в статусе ожидания
         console,
         defaultSetting: {},
     });
-    injectedTransactions.accounts.key = [{
-        1: {
-            trades: [
-                {
-                    offer_id: 3,
-                    status: 'pending',
-                },
-            ],
+    injectedTransactions.accounts.key = [
+        {
+            1: {
+                trades: [
+                    {
+                        offer_id: 3,
+                        status: 'pending',
+                        time: Date.now(),
+                    },
+                ],
+            },
+            2: {
+                trades: [
+                    {
+                        offer_id: 4,
+                        status: 'completed',
+                        time: Date.now(),
+                    },
+                ],
+            },
         },
-        2: {
-            trades: [
-                {
-                    offer_id: 4,
-                    status: 'completed',
-                },
-            ],
+        {
+            3: {},
+            4: {
+                trades: [],
+            },
+            5: {
+                trades: [
+                    {
+                        offer_id: 5,
+                        status: 'completed',
+                        time: (Date.now() - 60 * 60000) / 1000,
+                    },
+                ],
+            },
         },
-    }];
+    ];
+    injectedTransactions.accounts.key1 = [
+        {
+            1: {
+                trades: [
+                    {
+                        offer_id: 3,
+                        status: 'pending',
+                        time: Date.now(),
+                    },
+                ],
+            },
+        },
+    ];
     t.deepEqual(injectedTransactions.getPendingOfferIds('key'), [3]);
-    t.deepEqual(injectedTransactions.getPendingOfferIds('key1'), undefined);
+    t.deepEqual(injectedTransactions.getPendingOfferIds('key1'), [3]);
+    t.deepEqual(injectedTransactions.getPendingOfferIds('key2'), undefined);
 });
 
 Test('Получение offerId по id обмена работает верно', t => {

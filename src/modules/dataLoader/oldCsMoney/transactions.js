@@ -36,11 +36,17 @@ export const transactionsLoader = ({
         for (const transactions of this.accounts[keyAccount]) {
             const offerId = Object.values(transactions)
                 .map(transaction => transaction.trades
-                    .filter(trade => trade.status === 'pending')
-                    .map(trade => trade.offer_id))
+                    ?.filter(trade => trade.status === 'pending')
+                    ?.map(trade => trade.offer_id))
                 .flat()
                 .filter(offerId => offerId);
             offerId && offerIds.push(...offerId);
+            
+            // Выход, если обмен происходил давно
+            if (Object.values(transactions)
+                .some(transaction => transaction.trades?.[0]?.time * 1000 <= Date.now() - 60 * 60000)) {
+                return offerIds;
+            }
         }
         
         return offerIds;
