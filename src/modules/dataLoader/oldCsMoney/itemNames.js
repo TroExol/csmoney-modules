@@ -1,5 +1,5 @@
-import {get} from '../senders/index.js';
-import {defaultSetting} from '../../helpers/index.js';
+import {get} from '../../senders/index.js';
+import {defaultSetting} from '../../../helpers/index.js';
 
 /**
  * Список названий предметов.
@@ -18,7 +18,7 @@ export const itemNamesLoader = ({
     /**
      * Получение названий предметов.
      * @param {number | string} [appId] - Массив с id нужных игр.
-     * @returns {{730: Object.<string, {m: string}> | undefined, 570: Object.<string, {m: string}> | undefined} | Object.<string, {m: string}> | undefined}
+     * @returns {{730: Object<string, {m: string}> | undefined, 570: Object<string, {m: string}> | undefined} | Object<string, {m: string}> | undefined}
      */
     get (appId) {
         return appId ? this.nameId[appId] : this.nameId;

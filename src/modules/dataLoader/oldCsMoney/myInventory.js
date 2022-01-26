@@ -1,5 +1,5 @@
-import {get} from '../senders/index.js';
-import {defaultSetting, unstackItems} from '../../helpers/index.js';
+import {get} from '../../senders/index.js';
+import {defaultSetting, unstackItems} from '../../../helpers/index.js';
 
 /**
  * Мой инвентарь

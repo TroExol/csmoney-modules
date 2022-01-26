@@ -1,4 +1,4 @@
-import {get} from '../senders/index.js';
+import {get} from '../../senders/index.js';
 
 export const botInventoryLoader = ({
     get,

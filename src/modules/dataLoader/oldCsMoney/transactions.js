@@ -1,5 +1,5 @@
-import {get} from '../senders/index.js';
-import {defaultSetting} from '../../helpers/index.js';
+import {get} from '../../senders/index.js';
+import {defaultSetting} from '../../../helpers/index.js';
 
 /**
  * Список транзакций пользователя.
@@ -19,6 +19,53 @@ export const transactionsLoader = ({
      */
     get (keyAccount) {
         return this.accounts[keyAccount];
+    },
+    
+    /**
+     * Получение списка offerId в статусе ожидания подтверждения.
+     * @param {string} keyAccount - Ключ к нужному аккаунту.
+     * @returns {number[] | undefined}
+     */
+    getPendingOfferIds (keyAccount) {
+        if (!this.accounts[keyAccount]) {
+            return undefined;
+        }
+        
+        const offerIds = [];
+        
+        for (const transactions of this.accounts[keyAccount]) {
+            const offerId = Object.values(transactions)
+                .map(transaction => transaction.trades
+                    .filter(trade => trade.status === 'pending')
+                    .map(trade => trade.offer_id))
+                .flat()
+                .filter(offerId => offerId);
+            offerId && offerIds.push(...offerId);
+        }
+        
+        return offerIds;
+    },
+    
+    /**
+     * Получение offerId по id обмена
+     * @param {string} keyAccount - Ключ к нужному аккаунту.
+     * @param {number} merchantId - Id обмена.
+     * @returns {number | undefined}
+     */
+    getOfferId (keyAccount, merchantId) {
+        if (!this.accounts[keyAccount]) {
+            return undefined;
+        }
+        
+        for (const transactions of this.accounts[keyAccount]) {
+            for (const transaction of Object.values(transactions)) {
+                for (const trade of transaction.trades) {
+                    if (trade.merchant_id === merchantId) {
+                        return trade.offer_id;
+                    }
+                }
+            }
+        }
     },
     
     /**

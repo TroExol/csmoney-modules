@@ -1,5 +1,5 @@
-import {get} from '../senders/index.js';
-import {defaultSetting} from '../../helpers/index.js';
+import {get} from '../../senders/index.js';
+import {defaultSetting} from '../../../helpers/index.js';
 
 /**
  * Список транзакций пользователя.
@@ -19,6 +19,15 @@ export const purchasesLoader = ({
      */
     get (keyAccount) {
         return this.accounts[keyAccount];
+    },
+    
+    /**
+     * Получение предметов в инвентаре.
+     * @param {string} keyAccount - Ключ к нужному аккаунту.
+     * @returns {Object[] | undefined}
+     */
+    getItemsInInventory (keyAccount) {
+        return this.accounts[keyAccount]?.filter(item => item.status === 'inventory');
     },
     
     /**

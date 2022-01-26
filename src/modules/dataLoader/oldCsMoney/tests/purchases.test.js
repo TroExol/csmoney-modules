@@ -1,6 +1,6 @@
 /* eslint-disable id-length*/
 import Test from 'ava';
-import {transactionsLoader} from '../transactions.js';
+import {purchasesLoader} from '../purchases.js';
 
 const console = dispatches => ({
     log: (...values) => dispatches.push(['console.log', ...values]),
@@ -18,7 +18,7 @@ const getError = dispatches => (...values) => {
 };
 
 Test('Должно присутствовать поле accounts', t => {
-    t.assert(transactionsLoader({
+    t.assert(purchasesLoader({
         setTimeout,
         get: getSuccess,
         console,
@@ -26,47 +26,73 @@ Test('Должно присутствовать поле accounts', t => {
     }).accounts);
 });
 
-Test('Получение транзакций работает верно', t => {
-    const injectedTransactions = transactionsLoader({
+Test('Получение покупок и продаж работает верно', t => {
+    const injectedPurchases = purchasesLoader({
         setTimeout,
         get: getSuccess,
         console,
         defaultSetting: {},
     });
-    injectedTransactions.accounts.key = 'transactions';
-    t.is(injectedTransactions.get('key'), 'transactions');
+    injectedPurchases.accounts.key = 'purchases';
+    t.is(injectedPurchases.get('key'), 'purchases');
+});
+
+Test('Получение предметов в инвентаре работает верно', t => {
+    const injectedPurchases = purchasesLoader({
+        setTimeout,
+        get: getSuccess,
+        console,
+        defaultSetting: {},
+    });
+    injectedPurchases.accounts.key = [
+        {
+            id: 1,
+            status: 'inventory',
+        },
+        {
+            id: 2,
+            status: 'sold',
+        },
+    ];
+    t.deepEqual(injectedPurchases.getItemsInInventory('key'), [
+        {
+            id: 1,
+            status: 'inventory',
+        },
+    ]);
+    t.is(injectedPurchases.getItemsInInventory('key1'), undefined);
 });
 
 Test('Успешная загрузка', async t => {
     const dispatches = [];
     
-    const injectedTransactions = transactionsLoader({
+    const injectedPurchases = purchasesLoader({
         setTimeout: setTimeout(dispatches),
         get: getSuccess([{id: 1}])(dispatches),
         console: console(dispatches),
         defaultSetting: {},
     });
     
-    await injectedTransactions.load({key: 'cookie'}, {status: false, delay: 0}, ['key']);
+    await injectedPurchases.load({key: 'cookie'}, {status: false, delay: 0}, ['key']);
     
-    dispatches.push(['transactions', injectedTransactions.accounts.key]);
+    dispatches.push(['purchases', injectedPurchases.accounts.key]);
     
     t.deepEqual(dispatches, [
-        ['get', 'https://old.cs.money/get_transactions', null, 'cookie'],
-        ['transactions', [{id: 1}]],
+        ['get', 'https://old.cs.money/get_purchases', null, 'cookie'],
+        ['purchases', [{id: 1}]],
     ]);
 });
 
 Test('Успешная загрузка с дефолтными параметрами ', async t => {
     const dispatches = [];
     
-    const injectedTransactions = transactionsLoader({
+    const injectedPurchases = purchasesLoader({
         setTimeout: setTimeout(dispatches),
         get: getSuccess([{id: 1}])(dispatches),
         console: console(dispatches),
         defaultSetting: {
             repeatLoad: {
-                transactions: {
+                purchases: {
                     status: false,
                     delay: 0,
                 },
@@ -75,29 +101,29 @@ Test('Успешная загрузка с дефолтными параметр
         },
     });
     
-    await injectedTransactions.load({key: 'cookie'});
+    await injectedPurchases.load({key: 'cookie'});
     
-    dispatches.push(['transactions', injectedTransactions.accounts.key]);
+    dispatches.push(['purchases', injectedPurchases.accounts.key]);
     
     t.deepEqual(dispatches, [
-        ['get', 'https://old.cs.money/get_transactions', null, 'cookie'],
-        ['transactions', [{id: 1}]],
+        ['get', 'https://old.cs.money/get_purchases', null, 'cookie'],
+        ['purchases', [{id: 1}]],
     ]);
 });
 
 Test('Успешная загрузка с повторной загрузкой', async t => {
     const dispatches = [];
     
-    const injectedTransactions = transactionsLoader({
+    const injectedPurchases = purchasesLoader({
         setTimeout: setTimeout(dispatches),
         get: getSuccess([{id: 1}])(dispatches),
         console: console(dispatches),
         defaultSetting: {},
     });
     
-    await injectedTransactions.load({key: 'cookie'}, {status: true, delay: 60000}, ['key']);
+    await injectedPurchases.load({key: 'cookie'}, {status: true, delay: 60000}, ['key']);
     
-    const loadParams = injectedTransactions.load.toString()
+    const loadParams = injectedPurchases.load.toString()
         .split(/\s/)
         .join('')
         .match(/(?<=load\s*\().+?(?=\))/)[0].split(',').map(param => param.split('=')[0].trim());
@@ -109,52 +135,52 @@ Test('Успешная загрузка с повторной загрузкой
     
     t.deepEqual(loadParams, recursiveLoadParams);
     
-    dispatches.push(['transactions', injectedTransactions.accounts.key]);
+    dispatches.push(['purchases', injectedPurchases.accounts.key]);
     
     t.deepEqual(dispatches, [
-        ['get', 'https://old.cs.money/get_transactions', null, 'cookie'],
+        ['get', 'https://old.cs.money/get_purchases', null, 'cookie'],
         ['setTimeout', '() => this.load(cookie, repeatLoad, requiredAccounts)', 60000],
-        ['transactions', [{id: 1}]],
+        ['purchases', [{id: 1}]],
     ]);
 });
 
-Test('Успешная загрузка без транзакций', async t => {
+Test('Успешная загрузка без покупок и продаж', async t => {
     const dispatches = [];
     
-    const injectedTransactions = transactionsLoader({
+    const injectedPurchases = purchasesLoader({
         setTimeout: setTimeout(dispatches),
         get: getSuccess(null)(dispatches),
         console: console(dispatches),
         defaultSetting: {},
     });
     
-    await injectedTransactions.load({key: 'cookie'}, {status: false, delay: 0}, ['key']);
+    await injectedPurchases.load({key: 'cookie'}, {status: false, delay: 0}, ['key']);
     
-    dispatches.push(['transactions', injectedTransactions.accounts.key]);
+    dispatches.push(['purchases', injectedPurchases.accounts.key]);
     
     t.deepEqual(dispatches, [
-        ['get', 'https://old.cs.money/get_transactions', null, 'cookie'],
-        ['transactions', undefined],
+        ['get', 'https://old.cs.money/get_purchases', null, 'cookie'],
+        ['purchases', undefined],
     ]);
 });
 
 Test('Неуспешная загрузка', async t => {
     const dispatches = [];
     
-    const injectedTransactions = transactionsLoader({
+    const injectedPurchases = purchasesLoader({
         setTimeout: setTimeout(dispatches),
         get: getError(dispatches),
         console: console(dispatches),
         defaultSetting: {},
     });
     
-    await injectedTransactions.load({key: 'cookie'}, {status: false, delay: 0}, ['key']);
+    await injectedPurchases.load({key: 'cookie'}, {status: false, delay: 0}, ['key']);
     
-    dispatches.push(['transactions', injectedTransactions.accounts.key]);
+    dispatches.push(['purchases', injectedPurchases.accounts.key]);
     
     t.deepEqual(dispatches, [
-        ['get', 'https://old.cs.money/get_transactions', null, 'cookie'],
-        ['console.log', 'Ошибка при получении списка транзакций', 'error'],
-        ['transactions', undefined],
+        ['get', 'https://old.cs.money/get_purchases', null, 'cookie'],
+        ['console.log', 'Ошибка при получении списка покупок и продаж', 'error'],
+        ['purchases', undefined],
     ]);
 });

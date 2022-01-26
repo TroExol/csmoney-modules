@@ -1,5 +1,5 @@
-import {get} from '../senders/index.js';
-import {defaultSetting} from '../../helpers/index.js';
+import {get} from '../../senders/index.js';
+import {defaultSetting} from '../../../helpers/index.js';
 
 /**
  * Мой баланс
@@ -33,7 +33,7 @@ export const myBalance = ({
     /**
      * Получение баланса
      * @param {string} [keyAccount] - Ключ к нужному аккаунту.
-     * @returns {number || object || undefined}
+     * @returns {number | object | undefined}
      */
     get (keyAccount) {
         return keyAccount ? this.accounts[keyAccount] : this.accounts;
@@ -41,7 +41,7 @@ export const myBalance = ({
     
     /**
      * Обновление баланса с сервера
-     * @param {Object.<string, string>} cookie - Куки
+     * @param {Object<string, string>} cookie - Куки
      *
      * @param {object} repeatLoad - Обновлять ли повторно
      * @param {boolean} repeatLoad.status - Обновлять ли повторно
