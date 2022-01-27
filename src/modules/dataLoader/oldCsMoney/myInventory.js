@@ -91,13 +91,13 @@ export const myInventory = ({
      * Обновление инвентаря с сервера.
      * @param {Object<string, string>} cookie - Куки файлы новой версии CSM.
      *
-     * @param {object} repeatLoad - Обновлять ли повторно.
+     * @param {object?} repeatLoad - Обновлять ли повторно.
      * @param {boolean} repeatLoad.status - Обновлять ли повторно.
      * @param {number} repeatLoad.delay - Таймаут перед обновлением инвентаря.
      *
-     * @param {array} appIdList - Массив с id нужных игр.
+     * @param {array?} appIdList - Массив с id нужных игр.
      *
-     * @param {array} requiredAccounts - Массив с ключами ко всем аккаунтам.
+     * @param {array?} requiredAccounts - Массив с ключами ко всем аккаунтам.
      *
      * @returns {Promise<void>}
      */

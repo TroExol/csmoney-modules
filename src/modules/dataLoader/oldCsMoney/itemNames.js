@@ -27,13 +27,13 @@ export const itemNamesLoader = ({
     /**
      * Обновление названий предметов с сервера.
      *
-     * @param {string} language - Выбор языка для предметов. (ru || en)
+     * @param {('ru' | 'en')?} language - Выбор языка для предметов.
      *
-     * @param {object} repeatLoad - Обновлять ли повторно.
+     * @param {object?} repeatLoad - Обновлять ли повторно.
      * @param {boolean} repeatLoad.status - Обновлять ли повторно.
      * @param {number} repeatLoad.delay - Таймаут перед обновлением списка.
      *
-     * @param {array} appIdList - Массив с id нужных игр.
+     * @param {array?} appIdList - Массив с id нужных игр.
      *
      * @returns {Promise<void>}
      */

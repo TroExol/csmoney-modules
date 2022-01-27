@@ -54,11 +54,14 @@ export const transactionsLoader = ({
     
     /**
      * Получение offerId по id обмена
+     * @param {Object<string, string>} cookie - Куки файлы старой версии CSM.
      * @param {string} keyAccount - Ключ к нужному аккаунту.
      * @param {number} merchantId - Id обмена.
      * @returns {number | undefined}
      */
-    getOfferId (keyAccount, merchantId) {
+    async getOfferId (cookie, keyAccount, merchantId) {
+        await this.load(cookie, {status: false, delay: 0}, [keyAccount]);
+        
         if (!this.accounts[keyAccount]) {
             return undefined;
         }
@@ -78,11 +81,11 @@ export const transactionsLoader = ({
      * Обновление транзакций с сервера.
      * @param {Object<string, string>} cookie - Куки файлы старой версии CSM.
      *
-     * @param {object} repeatLoad - Обновлять ли повторно.
+     * @param {object?} repeatLoad - Обновлять ли повторно.
      * @param {boolean} repeatLoad.status - Обновлять ли повторно.
      * @param {number} repeatLoad.delay - Таймаут перед обновлением транзакций.
      *
-     * @param {array} requiredAccounts - Массив с ключами ко всем аккаунтам.
+     * @param {array?} requiredAccounts - Массив с ключами ко всем аккаунтам.
      *
      * @returns {Promise<void>}
      */

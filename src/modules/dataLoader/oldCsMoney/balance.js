@@ -43,11 +43,11 @@ export const myBalance = ({
      * Обновление баланса с сервера
      * @param {Object<string, string>} cookie - Куки
      *
-     * @param {object} repeatLoad - Обновлять ли повторно
+     * @param {object?} repeatLoad - Обновлять ли повторно
      * @param {boolean} repeatLoad.status - Обновлять ли повторно
      * @param {number} repeatLoad.delay - Таймаут перед обновлением списка
      *
-     * @param {array} requiredAccounts - Массив с ключами ко всем аккаунтам нужных игр.
+     * @param {array?} requiredAccounts - Массив с ключами ко всем аккаунтам нужных игр.
      *
      * @returns {Promise<void>}
      */

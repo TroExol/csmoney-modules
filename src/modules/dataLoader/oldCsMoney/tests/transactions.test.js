@@ -99,52 +99,46 @@ Test('Получение списка offerId в статусе ожидания
     t.deepEqual(injectedTransactions.getPendingOfferIds('key2'), undefined);
 });
 
-Test('Получение offerId по id обмена работает верно', t => {
+Test('Получение offerId по id обмена работает верно', async t => {
+    const dispatches = [];
+    
     const injectedTransactions = transactionsLoader({
-        setTimeout,
-        get: getSuccess,
-        console,
+        setTimeout: setTimeout(dispatches),
+        get: getSuccess([{
+            1: {
+                trades: [
+                    {
+                        merchant_id: 1,
+                        offer_id: 3,
+                    },
+                ],
+            },
+            2: {
+                trades: [
+                    {
+                        merchant_id: 2,
+                        offer_id: 4,
+                    },
+                ],
+            },
+        }])(dispatches),
+        console: console(dispatches),
         defaultSetting: {},
     });
-    injectedTransactions.accounts.key = [{
-        1: {
-            trades: [
-                {
-                    merchant_id: 1,
-                    offer_id: 3,
-                },
-            ],
-        },
-        2: {
-            trades: [
-                {
-                    merchant_id: 2,
-                    offer_id: 4,
-                },
-            ],
-        },
-    }];
-    injectedTransactions.accounts.key = [{
-        1: {
-            trades: [
-                {
-                    merchant_id: 1,
-                    offer_id: 3,
-                },
-            ],
-        },
-        2: {
-            trades: [
-                {
-                    merchant_id: 2,
-                    offer_id: 4,
-                },
-            ],
-        },
-    }];
-    t.is(injectedTransactions.getOfferId('key', 2), 4);
-    t.is(injectedTransactions.getOfferId('key', 3), undefined);
-    t.is(injectedTransactions.getOfferId('key1', 1), undefined);
+    t.is(await injectedTransactions.getOfferId({key: 'cookie'}, 'key', 2), 4);
+    t.is(await injectedTransactions.getOfferId({key: 'cookie'}, 'key', 3), undefined);
+});
+
+Test('Получение offerId по id обмена при пустой загрузке работает верно', async t => {
+    const dispatches = [];
+    
+    const injectedTransactions = transactionsLoader({
+        setTimeout: setTimeout(dispatches),
+        get: getSuccess(null)(dispatches),
+        console: console(dispatches),
+        defaultSetting: {},
+    });
+    t.is(await injectedTransactions.getOfferId({key: 'cookie'}, 'key', 1), undefined);
 });
 
 Test('Успешная загрузка', async t => {
