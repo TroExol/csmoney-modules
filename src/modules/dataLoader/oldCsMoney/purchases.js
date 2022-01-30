@@ -14,20 +14,20 @@ export const purchasesLoader = ({
     
     /**
      * Получение покупок и продаж.
-     * @param {string} keyAccount - Ключ к нужному аккаунту.
+     * @param {string} accountId - Ключ к нужному аккаунту.
      * @returns {Object[] | undefined}
      */
-    get (keyAccount) {
-        return this.accounts[keyAccount];
+    get (accountId) {
+        return this.accounts[accountId];
     },
     
     /**
      * Получение предметов в инвентаре.
-     * @param {string} keyAccount - Ключ к нужному аккаунту.
+     * @param {string} accountId - Ключ к нужному аккаунту.
      * @returns {Object[] | undefined}
      */
-    getItemsInInventory (keyAccount) {
-        return this.accounts[keyAccount]?.filter(item => item.status === 'inventory');
+    getItemsInInventory (accountId) {
+        return this.accounts[accountId]?.filter(item => item.status === 'inventory');
     },
     
     /**
@@ -43,18 +43,18 @@ export const purchasesLoader = ({
      * @returns {Promise<void>}
      */
     async load (cookie, repeatLoad = defaultSetting.repeatLoad.purchases,
-        requiredAccounts = defaultSetting.keyAccounts) {
+        requiredAccounts = defaultSetting.accountIds) {
         // Повторный запуск обновления
         const startReload = () => repeatLoad.status &&
             setTimeout(() => this.load(cookie, repeatLoad, requiredAccounts), repeatLoad.delay);
         
         try {
-            for (const keyAccount of requiredAccounts) {
+            for (const accountId of requiredAccounts) {
                 // Получение покупок и продаж
-                const purchases = await get('https://old.cs.money/get_purchases', null, cookie[keyAccount]);
+                const purchases = await get('https://old.cs.money/get_purchases', null, cookie[accountId]);
                 
                 if (purchases && Array.isArray(purchases)) {
-                    this.accounts[keyAccount] = purchases;
+                    this.accounts[accountId] = purchases;
                 }
             }
         } catch (error) {

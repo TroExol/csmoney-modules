@@ -14,26 +14,26 @@ export const transactionsLoader = ({
     
     /**
      * Получение транзакций.
-     * @param {string} keyAccount - Ключ к нужному аккаунту.
+     * @param {string} accountId - Ключ к нужному аккаунту.
      * @returns {Object[] | undefined}
      */
-    get (keyAccount) {
-        return this.accounts[keyAccount];
+    get (accountId) {
+        return this.accounts[accountId];
     },
     
     /**
      * Получение списка offerId в статусе ожидания подтверждения.
-     * @param {string} keyAccount - Ключ к нужному аккаунту.
+     * @param {string} accountId - Ключ к нужному аккаунту.
      * @returns {number[] | undefined}
      */
-    getPendingOfferIds (keyAccount) {
-        if (!this.accounts[keyAccount]) {
+    getPendingOfferIds (accountId) {
+        if (!this.accounts[accountId]) {
             return undefined;
         }
         
         const offerIds = [];
         
-        for (const transactions of this.accounts[keyAccount]) {
+        for (const transactions of this.accounts[accountId]) {
             const offerId = Object.values(transactions)
                 .map(transaction => transaction.trades
                     ?.filter(trade => trade.status === 'pending')
@@ -55,18 +55,18 @@ export const transactionsLoader = ({
     /**
      * Получение offerId по id обмена
      * @param {Object<string, string>} cookie - Куки файлы старой версии CSM.
-     * @param {string} keyAccount - Ключ к нужному аккаунту.
+     * @param {string} accountId - Ключ к нужному аккаунту.
      * @param {number} merchantId - Id обмена.
      * @returns {number | undefined}
      */
-    async getOfferId (cookie, keyAccount, merchantId) {
-        await this.load(cookie, {status: false, delay: 0}, [keyAccount]);
+    async getOfferId (cookie, accountId, merchantId) {
+        await this.load(cookie, {status: false, delay: 0}, [accountId]);
         
-        if (!this.accounts[keyAccount]) {
+        if (!this.accounts[accountId]) {
             return undefined;
         }
         
-        for (const transactions of this.accounts[keyAccount]) {
+        for (const transactions of this.accounts[accountId]) {
             for (const transaction of Object.values(transactions)) {
                 for (const trade of transaction.trades) {
                     if (trade.merchant_id === merchantId) {
@@ -90,18 +90,18 @@ export const transactionsLoader = ({
      * @returns {Promise<void>}
      */
     async load (cookie, repeatLoad = defaultSetting.repeatLoad.transactions,
-        requiredAccounts = defaultSetting.keyAccounts) {
+        requiredAccounts = defaultSetting.accountIds) {
         // Повторный запуск обновления
         const startReload = () => repeatLoad.status &&
             setTimeout(() => this.load(cookie, repeatLoad, requiredAccounts), repeatLoad.delay);
         
         try {
-            for (const keyAccount of requiredAccounts) {
+            for (const accountId of requiredAccounts) {
                 // Получение транзакций
-                const transactions = await get('https://old.cs.money/get_transactions', null, cookie[keyAccount]);
+                const transactions = await get('https://old.cs.money/get_transactions', null, cookie[accountId]);
                 
                 if (transactions && Array.isArray(transactions)) {
-                    this.accounts[keyAccount] = transactions;
+                    this.accounts[accountId] = transactions;
                 }
             }
         } catch (error) {

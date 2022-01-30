@@ -97,7 +97,7 @@ Test('Успешная загрузка баланса с дефолтными �
                     delay: 0,
                 },
             },
-            keyAccounts: ['key'],
+            accountIds: ['key'],
         },
     });
     injectedBalance.accounts.key = 0;

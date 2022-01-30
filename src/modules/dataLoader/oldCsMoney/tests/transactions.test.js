@@ -175,7 +175,7 @@ Test('Успешная загрузка с дефолтными параметр
                     delay: 0,
                 },
             },
-            keyAccounts: ['key'],
+            accountIds: ['key'],
         },
     });
     

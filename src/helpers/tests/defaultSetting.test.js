@@ -2,8 +2,8 @@
 import Test from 'ava';
 import defaultSetting from '../defaultSetting.js';
 
-Test('Должна присутствовать дефолтная настройка keyAccounts', t => {
-    t.assert(defaultSetting.keyAccounts);
+Test('Должна присутствовать дефолтная настройка accountIds', t => {
+    t.assert(defaultSetting.accountIds);
 });
 
 Test('Должна присутствовать дефолтная настройка isBuyOn', t => {
@@ -129,13 +129,13 @@ Test('Установка настроек работает верно', t => {
     });
     
     defaultSettingThis.set({
-        keyAccounts: ['1', '2'],
+        accountIds: ['1', '2'],
         languageName: 'ru',
         setting: 'setting',
     });
     
     t.deepEqual(dispatches, [
-        ['setAttribute', 'keyAccounts', ['1', '2']],
+        ['setAttribute', 'accountIds', ['1', '2']],
         ['setAttribute', 'languageName', 'ru'],
         ['setAttribute', 'setting', 'setting'],
     ]);

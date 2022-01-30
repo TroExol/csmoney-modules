@@ -141,7 +141,7 @@ Test('Удаление предмета работает верно при от�
     });
 });
 
-Test('Получение инвентаря работает верно с keyAccount и appId', t => {
+Test('Получение инвентаря работает верно с accountId и appId', t => {
     const injectedMyInventory = myInventory({
         setTimeout,
         unstackItems,
@@ -172,7 +172,7 @@ Test('Получение инвентаря работает верно с keyAc
     });
 });
 
-Test('Получение инвентаря работает верно с keyAccount', t => {
+Test('Получение инвентаря работает верно с accountId', t => {
     const injectedMyInventory = myInventory({
         setTimeout,
         unstackItems,
@@ -333,7 +333,7 @@ Test('Успешная загрузка инвентаря с дефолтным
                 },
             },
             appIdList: [730],
-            keyAccounts: ['key'],
+            accountIds: ['key'],
         },
     });
     injectedMyInventory.accounts.key = {};

@@ -14,29 +14,29 @@ export const myBalance = ({
     
     /**
      * Уменьшение баланса
-     * @param {string} keyAccount - Ключ к нужному аккаунту.
+     * @param {string} accountId - Ключ к нужному аккаунту.
      * @param {number} amount - Сумма
      */
-    decrease (keyAccount, amount) {
-        this.accounts[keyAccount] -= amount;
+    decrease (accountId, amount) {
+        this.accounts[accountId] -= amount;
     },
     
     /**
      * Увеличение баланса
-     * @param {string} keyAccount - Ключ к нужному аккаунту.
+     * @param {string} accountId - Ключ к нужному аккаунту.
      * @param {number} amount - Сумма
      */
-    increase (keyAccount, amount) {
-        this.accounts[keyAccount] += amount;
+    increase (accountId, amount) {
+        this.accounts[accountId] += amount;
     },
     
     /**
      * Получение баланса
-     * @param {string} [keyAccount] - Ключ к нужному аккаунту.
+     * @param {string} [accountId] - Ключ к нужному аккаунту.
      * @returns {number | object | undefined}
      */
-    get (keyAccount) {
-        return keyAccount ? this.accounts[keyAccount] : this.accounts;
+    get (accountId) {
+        return accountId ? this.accounts[accountId] : this.accounts;
     },
     
     /**
@@ -51,21 +51,21 @@ export const myBalance = ({
      *
      * @returns {Promise<void>}
      */
-    async load (cookie, repeatLoad = defaultSetting.repeatLoad.balance, requiredAccounts = defaultSetting.keyAccounts) {
+    async load (cookie, repeatLoad = defaultSetting.repeatLoad.balance, requiredAccounts = defaultSetting.accountIds) {
         // Повторный запуск обновления
         const startReload = () => repeatLoad.status &&
             setTimeout(() => this.load(cookie, repeatLoad, requiredAccounts), repeatLoad.delay);
         
         try {
-            for (const keyAccount of requiredAccounts) {
+            for (const accountId of requiredAccounts) {
                 // Получение баланса
-                const userInfo = await get('https://old.cs.money/user_info', null, cookie[keyAccount]);
+                const userInfo = await get('https://old.cs.money/user_info', null, cookie[accountId]);
                 
                 // Не удалось получить баланс
                 if (!userInfo.balance && userInfo.balance !== 0) {
                     continue;
                 }
-                this.accounts[keyAccount] = userInfo.balance;
+                this.accounts[accountId] = userInfo.balance;
             }
         } catch (error) {
             console.log('Ошибка при обновлении баланса', error);
