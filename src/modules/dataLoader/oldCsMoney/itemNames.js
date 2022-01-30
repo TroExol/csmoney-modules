@@ -1,5 +1,5 @@
-import {get} from '../senders/index.js';
-import {defaultSetting} from '../../helpers/index.js';
+import {get} from '../../senders/index.js';
+import {defaultSetting} from '../../../helpers/index.js';
 
 /**
  * Список названий предметов.
@@ -18,7 +18,7 @@ export const itemNamesLoader = ({
     /**
      * Получение названий предметов.
      * @param {number | string} [appId] - Массив с id нужных игр.
-     * @returns {{730: Object.<string, {m: string}> | undefined, 570: Object.<string, {m: string}> | undefined} | Object.<string, {m: string}> | undefined}
+     * @returns {{730: Object<string, {m: string}> | undefined, 570: Object<string, {m: string}> | undefined} | Object<string, {m: string}> | undefined}
      */
     get (appId) {
         return appId ? this.nameId[appId] : this.nameId;
@@ -27,13 +27,13 @@ export const itemNamesLoader = ({
     /**
      * Обновление названий предметов с сервера.
      *
-     * @param {string} language - Выбор языка для предметов. (ru || en)
+     * @param {('ru' | 'en')?} language - Выбор языка для предметов.
      *
-     * @param {object} repeatLoad - Обновлять ли повторно.
+     * @param {object?} repeatLoad - Обновлять ли повторно.
      * @param {boolean} repeatLoad.status - Обновлять ли повторно.
      * @param {number} repeatLoad.delay - Таймаут перед обновлением списка.
      *
-     * @param {array} appIdList - Массив с id нужных игр.
+     * @param {array?} appIdList - Массив с id нужных игр.
      *
      * @returns {Promise<void>}
      */

@@ -1,5 +1,5 @@
-import {get} from '../senders/index.js';
-import {defaultSetting} from '../../helpers/index.js';
+import {get} from '../../senders/index.js';
+import {defaultSetting} from '../../../helpers/index.js';
 
 export const itemStatus = ({
     setTimeout,
@@ -29,7 +29,7 @@ export const itemStatus = ({
     /**
      * Получение оверстоков.
      * @param {string | number} [appId] - id необходимой игры.
-     * @returns {Object.<string, Object.<string, number | string>> | undefined}
+     * @returns {Object<string, Object.<string, number | string>> | undefined}
      */
     get (appId) {
         return appId ? this.status[appId] : this.status;

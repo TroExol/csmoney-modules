@@ -2,21 +2,24 @@ import {isObject} from './index.js';
 
 const defaultSetting = {
     /**
-     * @type {array} - Имена для всех аккаунтов, для которых нужен доступ к CSM.
+     * @type {{oldCsm: boolean, newCsm: boolean}} - Включено ли получение куки.
      */
-    keyAccounts: ['account'],
+    receiveCookie: {
+        oldCsm: true,
+        newCsm: true,
+    },
+    /**
+     * @type {Object<string, Object>} - Данные об аккаунтах.
+     */
+    steamAuthorizationData: {},
     /**
      * @type {Object<string, boolean>} - Включена ли покупка для аккаунтов.
      */
-    isBuyOn: {
-        account: true,
-    },
+    isBuyOn: {},
     /**
      * @type {Object<string, boolean>} - Включена ли покупка для аккаунтов при перезагрузке ботов.
      */
-    isBuyOnWhileRefreshBots: {
-        account: true,
-    },
+    isBuyOnWhileRefreshBots: {},
     /**
      * @type {string[]} - Предметы, которые не покупать.
      */
@@ -36,9 +39,7 @@ const defaultSetting = {
     /**
      * @type {Object<string, number>} - Комиссия аккаунтов на продажу.
      */
-    commission: {
-        account: 7,
-    },
+    commission: {},
     /**
      * @type {{notOverstock: number, overstock: number}} - Минимальный профит при покупке.
      */
@@ -90,31 +91,38 @@ const defaultSetting = {
             status: false,
             delay: 0,
         },
+        transactions: {
+            status: false,
+            delay: 0,
+        },
+        purchases: {
+            status: false,
+            delay: 0,
+        },
     },
-    /**
-     * Установка значений по умолчанию.
-     * @param { object? } settings - Настройки
-     * @param { Array? } settings.appIdList - Массив с id нужных игр.
-     * @param { string? } settings.languageName - Выбор языка для предметов. (ru || en)
-     *
-     * @param { object? } settings.repeatLoad - Настройки обновления данных.
-     *
-     * @param { object? } settings.repeatLoad.myInventory - Настройки обновления инвентаря пользователя.
-     * @param { boolean } settings.repeatLoad.myInventory.status - Включить / Выключить повторное обновление.
-     * @param { number } settings.repeatLoad.myInventory.delay - Выбор языка для предметов. (ru || en)
-     *
-     * @param { object? } settings.repeatLoad.itemNames - Настройки обновления name id.
-     * @param { boolean } settings.repeatLoad.itemNames.status - Включить / Выключить повторное обновление.
-     * @param { number } settings.repeatLoad.itemNames.delay - Время задержки перед повторным обновлением.
-     *
-     * @param { object? } settings.repeatLoad.checkStatus - Настройки обновления статусов предметов.
-     * @param { boolean } settings.repeatLoad.checkStatus.status - Включить / Выключить повторное обновление.
-     * @param { number } settings.repeatLoad.checkStatus.delay - Время задержки перед повторным обновлением.
-     *
-     * @param { object? } settings.repeatLoad.balance - Настройки обновления баланса.
-     * @param { boolean } settings.repeatLoad.balance.status - Включить / Выключить повторное обновление.
-     * @param { number } settings.repeatLoad.balance.delay - Время задержки перед повторным обновлением.
-     */
+    /** Установка значений по умолчанию.
+    * @param { object? } settings - Настройки
+    * @param { Array? } settings.appIdList - Массив с id нужных игр.
+    * @param { string? } settings.languageName - Выбор языка для предметов. (ru || en)
+    *
+    * @param { object? } settings.repeatLoad - Настройки обновления данных.
+    *
+    * @param { object? } settings.repeatLoad.myInventory - Настройки обновления инвентаря пользователя.
+    * @param { boolean } settings.repeatLoad.myInventory.status - Включить / Выключить повторное обновление.
+    * @param { number } settings.repeatLoad.myInventory.delay - Выбор языка для предметов. (ru || en)
+    *
+    * @param { object? } settings.repeatLoad.itemNames - Настройки обновления name id.
+    * @param { boolean } settings.repeatLoad.itemNames.status - Включить / Выключить повторное обновление.
+    * @param { number } settings.repeatLoad.itemNames.delay - Время задержки перед повторным обновлением.
+    *
+    * @param { object? } settings.repeatLoad.checkStatus - Настройки обновления статусов предметов.
+    * @param { boolean } settings.repeatLoad.checkStatus.status - Включить / Выключить повторное обновление.
+    * @param { number } settings.repeatLoad.checkStatus.delay - Время задержки перед повторным обновлением.
+    *
+    * @param { object? } settings.repeatLoad.balance - Настройки обновления баланса.
+    * @param { boolean } settings.repeatLoad.balance.status - Включить / Выключить повторное обновление.
+    * @param { number } settings.repeatLoad.balance.delay - Время задержки перед повторным обновлением.
+    */
     set (settings) {
         // Изменяем нужные настройки
         Object.entries(settings).forEach(([settingKey, settingData]) => {
@@ -134,6 +142,23 @@ const defaultSetting = {
                 });
             }
         });
+    },
+    /**
+     * Получение ключей аккаунтов.
+     * @returns {string[]}
+     */
+    getAccountIds () {
+        return Object.keys(this.steamAuthorizationData);
+    },
+    /**
+     * Получение данных об аккаунте.
+     * @param {string} [accountId] - Ключ аккаунта.
+     * @returns {Object | Object[]}
+     */
+    getAccountDetails (accountId) {
+        return accountId
+            ? this.steamAuthorizationData[accountId]
+            : Object.values(this.steamAuthorizationData);
     },
 };
 

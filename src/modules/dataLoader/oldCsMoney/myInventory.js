@@ -1,5 +1,5 @@
-import {get} from '../senders/index.js';
-import {defaultSetting, unstackItems} from '../../helpers/index.js';
+import {get} from '../../senders/index.js';
+import {defaultSetting, unstackItems} from '../../../helpers/index.js';
 
 /**
  * Мой инвентарь
@@ -15,45 +15,44 @@ export const myInventory = ({
     
     /**
      * Добавление предмета в мой инвентарь.
-     * @param {string} keyAccount - Ключ к нужному аккаунту.
+     * @param {string} accountId - Ключ к нужному аккаунту.
      * @param {object} itemInfo - Объект с данными предмета, который был получен через WS.
      * @param {string | number} [appId] - id необходимой игры.
      */
-    //TODO Изменить на 
-    add (keyAccount, itemInfo, appId) {
-        if (!this.accounts[keyAccount][itemInfo.appId || appId].itemsCsm[itemInfo.o]) {
-            this.accounts[keyAccount][itemInfo.appId || appId].itemsCsm[itemInfo.o] = [];
+    add (accountId, itemInfo, appId) {
+        if (!this.accounts[accountId][itemInfo.appId || appId].itemsCsm[itemInfo.o]) {
+            this.accounts[accountId][itemInfo.appId || appId].itemsCsm[itemInfo.o] = [];
         }
-        this.accounts[keyAccount][itemInfo.appId || appId].itemsCsm[itemInfo.o].push(itemInfo);
+        this.accounts[accountId][itemInfo.appId || appId].itemsCsm[itemInfo.o].push(itemInfo);
     },
     
     /**
      * Удаление предмета из моего инвентаря
      *
-     * @param {string} keyAccount - Ключ к нужному аккаунту.
+     * @param {string} accountId - Ключ к нужному аккаунту.
      * @param {object} itemInfo - Объект с данными предмета, который был получен через WS.
      * @param {string | number} [appId] - id необходимой игры.
      */
-    remove (keyAccount, itemInfo, appId) {
-        this.accounts[keyAccount][itemInfo.appId || appId].itemsCsm[itemInfo.o] =
-            this.accounts[keyAccount][itemInfo.appId || appId].itemsCsm[itemInfo.o].filter(value => value.id[0] !== itemInfo.id[0]);
+    remove (accountId, itemInfo, appId) {
+        this.accounts[accountId][itemInfo.appId || appId].itemsCsm[itemInfo.o] =
+            this.accounts[accountId][itemInfo.appId || appId].itemsCsm[itemInfo.o].filter(value => value.id[0] !== itemInfo.id[0]);
         
-        if (this.accounts[keyAccount][itemInfo.appId || appId].itemsCsm[itemInfo.o].length === 0) {
-            delete this.accounts[keyAccount][itemInfo.appId || appId].itemsCsm[itemInfo.o];
+        if (this.accounts[accountId][itemInfo.appId || appId].itemsCsm[itemInfo.o].length === 0) {
+            delete this.accounts[accountId][itemInfo.appId || appId].itemsCsm[itemInfo.o];
         }
     },
     
     /**
      * Получение инвентаря для всех аккаунтов.
-     * @param {string} [keyAccount] - Ключ к нужному аккаунту.
+     * @param {string} [accountId] - Ключ к нужному аккаунту.
      * @param {number | string} [appId] - Id игры.
      * @returns {{730: Object, 570: Object} | Object<string, {730: Object, 570: Object} | Object>}
      */
-    get (keyAccount, appId) {
+    get (accountId, appId) {
         return appId
-            ? this.accounts[keyAccount][appId]
-            : (keyAccount)
-                ? this.accounts[keyAccount]
+            ? this.accounts[accountId][appId]
+            : (accountId)
+                ? this.accounts[accountId]
                 : this.accounts;
     },
     
@@ -91,33 +90,33 @@ export const myInventory = ({
      * Обновление инвентаря с сервера.
      * @param {Object<string, string>} cookie - Куки файлы новой версии CSM.
      *
-     * @param {object} repeatLoad - Обновлять ли повторно.
+     * @param {object?} repeatLoad - Обновлять ли повторно.
      * @param {boolean} repeatLoad.status - Обновлять ли повторно.
      * @param {number} repeatLoad.delay - Таймаут перед обновлением инвентаря.
      *
-     * @param {array} appIdList - Массив с id нужных игр.
+     * @param {array?} appIdList - Массив с id нужных игр.
      *
-     * @param {array} requiredAccounts - Массив с ключами ко всем аккаунтам. .
+     * @param {array?} requiredAccounts - Массив с ключами ко всем аккаунтам.
      *
      * @returns {Promise<void>}
      */
     async load (cookie, repeatLoad = defaultSetting.repeatLoad.myInventory, appIdList = defaultSetting.appIdList,
-        requiredAccounts = defaultSetting.keyAccounts) {
+        requiredAccounts = defaultSetting.getAccountIds()) {
         // Повторный запуск обновления
         const startReload = () => repeatLoad.status &&
             setTimeout(() => this.load(cookie, repeatLoad, appIdList, requiredAccounts), repeatLoad.delay);
         
         try {
-            for (const keyAccount of requiredAccounts) {
+            for (const accountId of requiredAccounts) {
                 // Проверка на существования данных для нужного аккаунта.
-                if (!this.accounts[keyAccount]) {
-                    this.accounts[keyAccount] = {};
+                if (!this.accounts[accountId]) {
+                    this.accounts[accountId] = {};
                 }
                 
                 for (const appId of appIdList) {
-                    const myInventory = await get(`https://old.cs.money/${appId}/load_user_inventory`, null, cookie[keyAccount]);
+                    const myInventory = await get(`https://old.cs.money/${appId}/load_user_inventory`, null, cookie[accountId]);
                     
-                    !this.accounts[keyAccount][appId] && (this.accounts[keyAccount][appId] = {
+                    !this.accounts[accountId][appId] && (this.accounts[accountId][appId] = {
                         itemsCsm: {},
                         itemsSteam: {},
                         error: false,
@@ -127,13 +126,13 @@ export const myInventory = ({
                         // Обработка ошибки. //TODO Надо доработать
                         if (myInventory.error) {
                             console.log(myInventory.error);
-                            this.accounts[keyAccount][appId].error = myInventory.error;
+                            this.accounts[accountId][appId].error = myInventory.error;
                             continue;
                         }
                     }
                     
                     // Обнуляем инвентарь
-                    this.accounts[keyAccount][appId] = {
+                    this.accounts[accountId][appId] = {
                         itemsCsm: {},
                         itemsSteam: {},
                         error: false,
@@ -147,15 +146,15 @@ export const myInventory = ({
                         const unstackedItems = unstackItems(item, appId);
                         
                         if (unstackedItems[0].vi?.[0]) {
-                            if (!this.accounts[keyAccount][appId].itemsCsm[unstackedItems[0].o]) {
-                                this.accounts[keyAccount][appId].itemsCsm[unstackedItems[0].o] = [];
+                            if (!this.accounts[accountId][appId].itemsCsm[unstackedItems[0].o]) {
+                                this.accounts[accountId][appId].itemsCsm[unstackedItems[0].o] = [];
                             }
-                            this.accounts[keyAccount][appId].itemsCsm[unstackedItems[0].o].push(...unstackedItems);
+                            this.accounts[accountId][appId].itemsCsm[unstackedItems[0].o].push(...unstackedItems);
                         } else {
-                            if (!this.accounts[keyAccount][appId].itemsSteam[unstackedItems[0].o]) {
-                                this.accounts[keyAccount][appId].itemsSteam[unstackedItems[0].o] = [];
+                            if (!this.accounts[accountId][appId].itemsSteam[unstackedItems[0].o]) {
+                                this.accounts[accountId][appId].itemsSteam[unstackedItems[0].o] = [];
                             }
-                            this.accounts[keyAccount][appId].itemsSteam[unstackedItems[0].o].push(...unstackedItems);
+                            this.accounts[accountId][appId].itemsSteam[unstackedItems[0].o].push(...unstackedItems);
                         }
                     }
                 }
