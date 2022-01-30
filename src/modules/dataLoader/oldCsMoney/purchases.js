@@ -43,7 +43,7 @@ export const purchasesLoader = ({
      * @returns {Promise<void>}
      */
     async load (cookie, repeatLoad = defaultSetting.repeatLoad.purchases,
-        requiredAccounts = defaultSetting.accountIds) {
+        requiredAccounts = defaultSetting.getAccountIds()) {
         // Повторный запуск обновления
         const startReload = () => repeatLoad.status &&
             setTimeout(() => this.load(cookie, repeatLoad, requiredAccounts), repeatLoad.delay);

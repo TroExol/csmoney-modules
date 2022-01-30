@@ -333,7 +333,7 @@ Test('Успешная загрузка инвентаря с дефолтным
                 },
             },
             appIdList: [730],
-            accountIds: ['key'],
+            getAccountIds: () => ['key'],
         },
     });
     injectedMyInventory.accounts.key = {};

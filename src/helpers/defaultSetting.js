@@ -2,21 +2,24 @@ import {isObject} from './index.js';
 
 const defaultSetting = {
     /**
-     * @type {array} - Имена для всех аккаунтов, для которых нужен доступ к CSM.
+     * @type {{oldCsm: boolean, newCsm: boolean}} - Включено ли получение куки.
      */
-    accountIds: ['account'],
+    receiveCookie: {
+        oldCsm: true,
+        newCsm: true,
+    },
+    /**
+     * @type {Object<string, Object>} - Данные об аккаунтах.
+     */
+    steamAuthorizationData: {},
     /**
      * @type {Object<string, boolean>} - Включена ли покупка для аккаунтов.
      */
-    isBuyOn: {
-        account: true,
-    },
+    isBuyOn: {},
     /**
      * @type {Object<string, boolean>} - Включена ли покупка для аккаунтов при перезагрузке ботов.
      */
-    isBuyOnWhileRefreshBots: {
-        account: true,
-    },
+    isBuyOnWhileRefreshBots: {},
     /**
      * @type {string[]} - Предметы, которые не покупать.
      */
@@ -36,9 +39,7 @@ const defaultSetting = {
     /**
      * @type {Object<string, number>} - Комиссия аккаунтов на продажу.
      */
-    commission: {
-        account: 7,
-    },
+    commission: {},
     /**
      * @type {{notOverstock: number, overstock: number}} - Минимальный профит при покупке.
      */
@@ -122,6 +123,23 @@ const defaultSetting = {
                 });
             }
         });
+    },
+    /**
+     * Получение ключей аккаунтов.
+     * @returns {string[]}
+     */
+    getAccountIds () {
+        return Object.keys(this.steamAuthorizationData);
+    },
+    /**
+     * Получение данных об аккаунте.
+     * @param {string} [accountId] - Ключ аккаунта.
+     * @returns {Object | Object[]}
+     */
+    getAccountDetails (accountId) {
+        return accountId
+            ? this.steamAuthorizationData[accountId]
+            : Object.values(this.steamAuthorizationData);
     },
 };
 

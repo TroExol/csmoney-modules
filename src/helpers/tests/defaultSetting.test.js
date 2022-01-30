@@ -2,18 +2,22 @@
 import Test from 'ava';
 import defaultSetting from '../defaultSetting.js';
 
-Test('Должна присутствовать дефолтная настройка accountIds', t => {
-    t.assert(defaultSetting.accountIds);
+Test('Должна присутствовать дефолтная настройка steamAuthorizationData', t => {
+    t.assert(defaultSetting.steamAuthorizationData);
+});
+
+Test('Должна присутствовать дефолтная настройка receiveCookie', t => {
+    t.assert(defaultSetting.receiveCookie);
+    t.assert(defaultSetting.receiveCookie.oldCsm);
+    t.assert(defaultSetting.receiveCookie.newCsm);
 });
 
 Test('Должна присутствовать дефолтная настройка isBuyOn', t => {
     t.assert(defaultSetting.isBuyOn);
-    t.assert(defaultSetting.isBuyOn.account === true);
 });
 
 Test('Должна присутствовать дефолтная настройка isBuyOnWhileRefreshBots', t => {
     t.assert(defaultSetting.isBuyOnWhileRefreshBots);
-    t.assert(defaultSetting.isBuyOnWhileRefreshBots.account === true);
 });
 
 Test('Должна присутствовать дефолтная настройка blacklist', t => {
@@ -22,7 +26,6 @@ Test('Должна присутствовать дефолтная настро�
 
 Test('Должна присутствовать дефолтная настройка commission', t => {
     t.assert(defaultSetting.commission);
-    t.assert(defaultSetting.commission.account === 7);
 });
 
 Test('Должна присутствовать дефолтная настройка profit', t => {
@@ -129,13 +132,11 @@ Test('Установка настроек работает верно', t => {
     });
     
     defaultSettingThis.set({
-        accountIds: ['1', '2'],
         languageName: 'ru',
         setting: 'setting',
     });
     
     t.deepEqual(dispatches, [
-        ['setAttribute', 'accountIds', ['1', '2']],
         ['setAttribute', 'languageName', 'ru'],
         ['setAttribute', 'setting', 'setting'],
     ]);
@@ -216,4 +217,47 @@ Test('При установке repeatLoad без status и delay происхо
             myInventory: {},
         },
     }), {message: 'Для настройки repeatLoad необходимо установить поля status и delay'});
+});
+
+Test('Получение ключей аккаунтов работает верно', t => {
+    defaultSetting.steamAuthorizationData = {};
+    defaultSetting.set({
+        steamAuthorizationData: {
+            key: {},
+        },
+    });
+    
+    t.deepEqual(defaultSetting.getAccountIds(), ['key']);
+});
+
+Test('Получение ключей аккаунтов при отсутствии аккаунтов работает верно', t => {
+    defaultSetting.steamAuthorizationData = {};
+    t.deepEqual(defaultSetting.getAccountIds(), []);
+});
+
+Test('Получение данных аккаунтов работает верно', t => {
+    defaultSetting.steamAuthorizationData = {};
+    defaultSetting.set({
+        steamAuthorizationData: {
+            key: {id: 1},
+        },
+    });
+    
+    t.deepEqual(defaultSetting.getAccountDetails(), [{id: 1}]);
+});
+
+Test('Получение данных аккаунта работает верно', t => {
+    defaultSetting.steamAuthorizationData = {};
+    defaultSetting.set({
+        steamAuthorizationData: {
+            key: {id: 1},
+        },
+    });
+    
+    t.deepEqual(defaultSetting.getAccountDetails('key'), {id: 1});
+});
+
+Test('Получение данных несуществующего аккаунта работает верно', t => {
+    defaultSetting.steamAuthorizationData = {};
+    t.deepEqual(defaultSetting.getAccountDetails('key2'), undefined);
 });

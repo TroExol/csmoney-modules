@@ -101,7 +101,7 @@ export const myInventory = ({
      * @returns {Promise<void>}
      */
     async load (cookie, repeatLoad = defaultSetting.repeatLoad.myInventory, appIdList = defaultSetting.appIdList,
-        requiredAccounts = defaultSetting.accountIds) {
+        requiredAccounts = defaultSetting.getAccountIds()) {
         // Повторный запуск обновления
         const startReload = () => repeatLoad.status &&
             setTimeout(() => this.load(cookie, repeatLoad, appIdList, requiredAccounts), repeatLoad.delay);

@@ -51,7 +51,7 @@ export const myBalance = ({
      *
      * @returns {Promise<void>}
      */
-    async load (cookie, repeatLoad = defaultSetting.repeatLoad.balance, requiredAccounts = defaultSetting.accountIds) {
+    async load (cookie, repeatLoad = defaultSetting.repeatLoad.balance, requiredAccounts = defaultSetting.getAccountIds()) {
         // Повторный запуск обновления
         const startReload = () => repeatLoad.status &&
             setTimeout(() => this.load(cookie, repeatLoad, requiredAccounts), repeatLoad.delay);
