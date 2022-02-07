@@ -10,6 +10,7 @@ const unstackItems = dispatches => (item, appId) => {
     dispatches.push(['unstackItems', item, appId]);
     return [{...item, appId}];
 };
+const getOldResponseError = value => value;
 
 const getSuccess = response => dispatches => (...values) => {
     dispatches.push(['get', ...values]);
@@ -28,6 +29,7 @@ Test('Должно присутствовать поле accounts', t => {
         get: getSuccess,
         console,
         defaultSetting: {},
+        getOldResponseError,
     }).accounts);
 });
 
@@ -38,6 +40,7 @@ Test('Добавление предмета работает верно', t => {
         get: getSuccess,
         console,
         defaultSetting: {},
+        getOldResponseError,
     });
     injectedMyInventory.accounts.key = {730: {itemsCsm: {}}};
     injectedMyInventory.add('key', {
@@ -63,6 +66,7 @@ Test('Добавление предмета работает верно при �
         get: getSuccess,
         console,
         defaultSetting: {},
+        getOldResponseError,
     });
     injectedMyInventory.accounts.key = {730: {itemsCsm: {}}};
     injectedMyInventory.add('key', {
@@ -86,6 +90,7 @@ Test('Удаление предмета работает верно', t => {
         get: getSuccess,
         console,
         defaultSetting: {},
+        getOldResponseError,
     });
     injectedMyInventory.accounts.key = {
         730: {
@@ -118,6 +123,7 @@ Test('Удаление предмета работает верно при от�
         get: getSuccess,
         console,
         defaultSetting: {},
+        getOldResponseError,
     });
     injectedMyInventory.accounts.key = {
         730: {
@@ -148,6 +154,7 @@ Test('Получение инвентаря работает верно с accou
         get: getSuccess,
         console,
         defaultSetting: {},
+        getOldResponseError,
     });
     injectedMyInventory.accounts.key = {
         730: {
@@ -179,6 +186,7 @@ Test('Получение инвентаря работает верно с accou
         get: getSuccess,
         console,
         defaultSetting: {},
+        getOldResponseError,
     });
     injectedMyInventory.accounts.key = {
         730: {
@@ -212,6 +220,7 @@ Test('Получение инвентаря работает верно без �
         get: getSuccess,
         console,
         defaultSetting: {},
+        getOldResponseError,
     });
     injectedMyInventory.accounts.key = {
         730: {
@@ -247,6 +256,7 @@ Test('Получение всех инвентарей работает верн
         get: getSuccess,
         console,
         defaultSetting: {},
+        getOldResponseError,
     });
     injectedMyInventory.accounts.key = {
         730: {
@@ -284,6 +294,7 @@ Test('Успешная загрузка инвентаря', async t => {
         get: getSuccess([{o: 1, vi: [1]}, {o: 1, vi: [0]}])(dispatches),
         console: console(dispatches),
         defaultSetting: {},
+        getOldResponseError,
     });
     injectedMyInventory.accounts.key = {};
     
@@ -335,6 +346,7 @@ Test('Успешная загрузка инвентаря с дефолтным
             appIdList: [730],
             getAccountIds: () => ['key'],
         },
+        getOldResponseError,
     });
     injectedMyInventory.accounts.key = {};
     
@@ -377,6 +389,7 @@ Test('Успешная загрузка инвентаря с повторной
         get: getSuccess([{o: 1, vi: [1]}, {o: 1, vi: [0]}])(dispatches),
         console: console(dispatches),
         defaultSetting: {},
+        getOldResponseError,
     });
     injectedMyInventory.accounts.key = {};
     
@@ -432,6 +445,7 @@ Test('Успешная загрузка пустого инвентаря', asyn
         get: getSuccess([])(dispatches),
         console: console(dispatches),
         defaultSetting: {},
+        getOldResponseError,
     });
     injectedMyInventory.accounts.key = {};
     
@@ -457,9 +471,10 @@ Test('Успешная загрузка инвентаря с ошибкой', a
     const injectedMyInventory = myInventory({
         setTimeout: setTimeout(dispatches),
         unstackItems: unstackItems(dispatches),
-        get: getSuccess({error: 3})(dispatches),
+        get: getSuccess('3')(dispatches),
         console: console(dispatches),
         defaultSetting: {},
+        getOldResponseError,
     });
     injectedMyInventory.accounts.key = {};
     
@@ -469,12 +484,12 @@ Test('Успешная загрузка инвентаря с ошибкой', a
     
     t.deepEqual(dispatches, [
         ['get', 'https://old.cs.money/730/load_user_inventory', null, 'cookie'],
-        ['console.log', 3],
+        ['console.log', '3'],
         ['inventory', {
             730: {
                 itemsCsm: {},
                 itemsSteam: {},
-                error: 3,
+                error: '3',
             },
         }],
     ]);
@@ -489,6 +504,7 @@ Test('Неуспешная загрузка инвентаря', async t => {
         get: getError(dispatches),
         console: console(dispatches),
         defaultSetting: {},
+        getOldResponseError,
     });
     
     await injectedMyInventory.load({key: 'cookie'}, {status: false, delay: 0}, [730], ['key']);

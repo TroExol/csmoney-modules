@@ -1,5 +1,6 @@
 import {get} from '../../senders/index.js';
 import {defaultSetting, unstackItems} from '../../../helpers/index.js';
+import getOldResponseError from '../../../helpers/getOldResponseError.js';
 
 /**
  * Мой инвентарь
@@ -10,6 +11,7 @@ export const myInventory = ({
     setTimeout,
     defaultSetting,
     unstackItems,
+    getOldResponseError,
 }) => ({
     accounts: {},
     
@@ -123,12 +125,13 @@ export const myInventory = ({
                     });
                     
                     if (!Array.isArray(myInventory)) {
-                        // Обработка ошибки. //TODO Надо доработать
-                        if (myInventory.error) {
-                            console.log(myInventory.error);
-                            this.accounts[accountId][appId].error = myInventory.error;
-                            continue;
+                        const error = getOldResponseError(myInventory);
+                        
+                        if (error) {
+                            console.log(error);
+                            this.accounts[accountId][appId].error = error;
                         }
+                        continue;
                     }
                     
                     // Обнуляем инвентарь
