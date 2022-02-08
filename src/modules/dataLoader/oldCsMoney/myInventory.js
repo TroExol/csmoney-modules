@@ -176,4 +176,5 @@ export default myInventory({
     setTimeout,
     defaultSetting,
     unstackItems,
+    getOldResponseError,
 });

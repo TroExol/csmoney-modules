@@ -23,16 +23,19 @@ export const transactionsLoader = ({
     
     /**
      * Получение списка offerId в статусе ожидания подтверждения.
+     * @param {Object<string, string>} cookie - Куки файлы старой версии CSM.
      * @param {string} accountId - Ключ к нужному аккаунту.
      * @returns {number[] | undefined}
      */
-    getPendingOfferIds (accountId) {
+    async getPendingOfferIds (cookie, accountId) {
+        await this.load(cookie, {status: false, delay: 0}, [accountId]);
+        
         if (!this.accounts[accountId]) {
             return undefined;
         }
         
         const offerIds = [];
-        
+    
         for (const transactions of this.accounts[accountId]) {
             const offerId = Object.values(transactions)
                 .map(transaction => transaction.trades

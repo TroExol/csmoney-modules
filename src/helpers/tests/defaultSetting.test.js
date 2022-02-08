@@ -110,6 +110,12 @@ Test('Должна присутствовать дефолтная настро�
     t.assert(defaultSetting.repeatLoad.purchases.delay === 0);
 });
 
+Test('Должна присутствовать дефолтная настройка repeatLoad.confirmOffer', t => {
+    t.assert(defaultSetting.repeatLoad.confirmOffer);
+    t.assert(defaultSetting.repeatLoad.confirmOffer.status === false);
+    t.assert(defaultSetting.repeatLoad.confirmOffer.delay === 0);
+});
+
 Test('Установка настроек работает верно', t => {
     const dispatches = [];
     
