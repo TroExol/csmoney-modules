@@ -99,6 +99,10 @@ const defaultSetting = {
             status: false,
             delay: 0,
         },
+        confirmOffer: {
+            status: false,
+            delay: 0,
+        }
     },
     /** Установка значений по умолчанию.
     * @param { object? } settings - Настройки

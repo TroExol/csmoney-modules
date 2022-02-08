@@ -3,7 +3,7 @@ import Test from 'ava';
 import * as dataLoader from '../index.js';
 
 Test('Пакет экспортирует верное кол-во частей', t => {
-    t.is(Object.keys(dataLoader).length, 6);
+    t.is(Object.keys(dataLoader).length, 7);
 });
 
 Test('Пакет экспортирует balance', t => {
@@ -28,4 +28,8 @@ Test('Пакет экспортирует salesHistory', t => {
 
 Test('Пакет экспортирует botInventoryLoader', t => {
     t.true('botInventoryLoader' in dataLoader);
+});
+
+Test('Пакет экспортирует transactions', t => {
+    t.true('transactions' in dataLoader);
 });

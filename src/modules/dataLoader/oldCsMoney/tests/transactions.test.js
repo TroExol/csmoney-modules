@@ -37,66 +37,80 @@ Test('Получение транзакций работает верно', t =>
     t.is(injectedTransactions.get('key'), 'transactions');
 });
 
-Test('Получение списка offerId в статусе ожидания подтверждения работает верно', t => {
-    const injectedTransactions = transactionsLoader({
+Test('Получение списка offerId в статусе ожидания подтверждения работает верно', async t => {
+    let injectedTransactions = transactionsLoader({
         setTimeout,
-        get: getSuccess,
+        get: getSuccess([
+            {
+                1: {
+                    trades: [
+                        {
+                            offer_id: 3,
+                            status: 'pending',
+                            time: Date.now(),
+                        },
+                    ],
+                },
+                2: {
+                    trades: [
+                        {
+                            offer_id: 4,
+                            status: 'completed',
+                            time: Date.now(),
+                        },
+                    ],
+                },
+            },
+            {
+                3: {},
+                4: {
+                    trades: [],
+                },
+                5: {
+                    trades: [
+                        {
+                            offer_id: 5,
+                            status: 'completed',
+                            time: (Date.now() - 60 * 60000) / 1000,
+                        },
+                    ],
+                },
+            },
+        ])([]),
         console,
         defaultSetting: {},
     });
-    injectedTransactions.accounts.key = [
-        {
-            1: {
-                trades: [
-                    {
-                        offer_id: 3,
-                        status: 'pending',
-                        time: Date.now(),
-                    },
-                ],
+    t.deepEqual(await injectedTransactions.getPendingOfferIds({key: 'cookie'}, 'key'), [3]);
+    
+    injectedTransactions = transactionsLoader({
+        setTimeout,
+        get: getSuccess([
+            {
+                1: {
+                    trades: [
+                        {
+                            offer_id: 3,
+                            status: 'pending',
+                            time: Date.now(),
+                        },
+                    ],
+                },
             },
-            2: {
-                trades: [
-                    {
-                        offer_id: 4,
-                        status: 'completed',
-                        time: Date.now(),
-                    },
-                ],
-            },
-        },
-        {
-            3: {},
-            4: {
-                trades: [],
-            },
-            5: {
-                trades: [
-                    {
-                        offer_id: 5,
-                        status: 'completed',
-                        time: (Date.now() - 60 * 60000) / 1000,
-                    },
-                ],
-            },
-        },
-    ];
-    injectedTransactions.accounts.key1 = [
-        {
-            1: {
-                trades: [
-                    {
-                        offer_id: 3,
-                        status: 'pending',
-                        time: Date.now(),
-                    },
-                ],
-            },
-        },
-    ];
-    t.deepEqual(injectedTransactions.getPendingOfferIds('key'), [3]);
-    t.deepEqual(injectedTransactions.getPendingOfferIds('key1'), [3]);
-    t.deepEqual(injectedTransactions.getPendingOfferIds('key2'), undefined);
+        ])([]),
+        console,
+        defaultSetting: {},
+    });
+    t.deepEqual(await injectedTransactions.getPendingOfferIds({key: 'cookie'}, 'key1'), [3]);
+});
+
+Test('Получение списка offerId в статусе ожидания подтверждения работает верно при отсутствии данных', async t => {
+    const injectedTransactions = transactionsLoader({
+        setTimeout,
+        get: getSuccess()([]),
+        console,
+        defaultSetting: {},
+    });
+    t.deepEqual(await injectedTransactions.getPendingOfferIds({key: 'cookie'}, 'key2'), undefined);
 });
 
 Test('Получение offerId по id обмена работает верно', async t => {
