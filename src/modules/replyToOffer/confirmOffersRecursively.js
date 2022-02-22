@@ -27,7 +27,7 @@ export const confirmOffersRecursively = ({
                 const pendingTradeOfferIds = await transactions.getPendingOfferIds(cookie, accountId);
     
                 for (const offerId of pendingTradeOfferIds) {
-                    replyToOffer(offerId, 'confirm', cookie[accountId]);
+                    replyToOffer({offerId, action: 'confirm', accountId});
                 }
             }
         } catch (error) {

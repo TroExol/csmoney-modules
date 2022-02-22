@@ -90,7 +90,7 @@ export const myInventory = ({
     
     /**
      * Обновление инвентаря с сервера.
-     * @param {Object<string, string>} cookie - Куки файлы новой версии CSM.
+     * @param {Object<string, string>} cookie - Куки файлы старой версии CSM.
      *
      * @param {object?} repeatLoad - Обновлять ли повторно.
      * @param {boolean} repeatLoad.status - Обновлять ли повторно.
@@ -116,7 +116,7 @@ export const myInventory = ({
                 }
                 
                 for (const appId of appIdList) {
-                    const myInventory = await get(`https://old.cs.money/${appId}/load_user_inventory`, null, cookie[accountId]);
+                    const myInventory = await get(`https://old.cs.money/${appId}/load_user_inventory`, null, cookie || {oldCsm: true, accountId});
                     
                     !this.accounts[accountId][appId] && (this.accounts[accountId][appId] = {
                         itemsCsm: {},
