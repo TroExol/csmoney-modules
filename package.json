@@ -7,8 +7,7 @@
     "linter": "eslint src/ --ext .js --fix",
     "prepare": "husky install && chmod ug+x .husky/*",
     "update-snapshots": "ava reset-cache && ava --update-snapshots",
-    "test-development": "ava reset-cache && ava --watch",
-    "test": "c8 ava"
+    "test-development": "ava reset-cache && ava --watch"
   },
   "repository": {
     "type": "git",

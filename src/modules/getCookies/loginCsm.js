@@ -15,17 +15,21 @@ const url = {
 };
 
 
-const cookie = {
+const getCookies = {
     accounts: {},
+    set(cookies) {
+        this.accounts[cookies];
+    },
+    
     /**
      * Приводим объект с cookie в строку. key=value
      * @param {String | Number} accountId - Id аккаунта Steam.
      * @param {Object} [cfg] - Если не передать аргумент, то будет возвращена строка cookie файлов Steam.
      * @param {Boolean} cfg.oldCsm - Получить строку cookie файлов, для старой версии CSM.
      * @param {Boolean} cfg.newCsm - Получить строку cookie файлов, для новой версии CSM.
-     * @returns {String}
+     * @returns {String} - За один запрос, восвращает строку файлов cookie для одного сайта и для одного аккаунта.
      */
-    getStrCookie(accountId, {oldCsm, newCsm}) {
+    getStrCookie({accountId, oldCsm, newCsm}) {
 
         const site = oldCsm ? 'oldCsm' : (newCsm) ? 'newCsm' : 'steam';
 
@@ -142,7 +146,7 @@ const cookie = {
                     urlAuth: 'https://auth.dota.trade/login?redirectUrl=https://old.cs.money&callbackUrl=https://old.cs.money/login', 
                     urlSite: 'https://old.cs.money/', 
                     accountId,
-                    steamCookie: cookie || this.getStrCookie(accountId, 'steam'),
+                    steamCookie: cookie || this.getStrCookie({accountId}),
                     siteCookie: 'currency=USD;pro_version=true;language=en;'
                 })
             );
@@ -163,7 +167,7 @@ const cookie = {
                     urlAuth: 'https://auth.dota.trade/login?redirectUrl=https://cs.money/ru/csgo/trade&callbackUrl=https://cs.money/login', 
                     urlSite: 'https://cs.money/', 
                     accountId: accountId,
-                    steamCookie: cookie || this.getStrCookie(accountId, 'steam'),
+                    steamCookie: cookie || this.getStrCookie({accountId}),
                     siteCookie: 'currency=USD;pro_version=true;language=en;'
                 })
             );
@@ -173,5 +177,5 @@ const cookie = {
     }
 };
 
-export default cookie;
+export default getCookies;
 

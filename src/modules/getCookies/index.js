@@ -1,5 +1,5 @@
-import cookie from './loginCsm.js';
+import getCookies from './loginCsm.js';
 
 export {
-    cookie
+    getCookies
 };

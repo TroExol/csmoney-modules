@@ -1,27 +1,40 @@
 import axios from 'axios';
 import getHeaders from './headers.js';
+import {isObject, getOldResponseError} from '../../helpers/isObject.js';
+import {getCookies} from '../getCookies/index.js';
 
 export const get = ({
     axios,
     getHeaders,
-    console,
+    console
 }) =>
     /**
-     * GET запрос
-     * @param {string} path - Ссылка для запроса
-     * @param {Object || null} params - Параметры запроса
-     * @param {string || null} cookie - Куки
-     * @returns {Promise<any>} - Результат запроса
+     * GET запрос.
+     * @param {String} path - Ссылка для запроса.
+     * @param {Object | null} params - Параметры запроса.
+     * @param {String | Object | null} cookie - Может быть строкой файлов куки. Или объектом с параметрами для получения нужных куки для указанного аккаунта.
+     * @param {String | Number} [cookie.accountId ] - Id аккаeнта для которого требуются cookie.
+     * @param {true} [cookie.oldCsm] - 
+     *  @param {true} [cookie.newCsm] - 
+     * @returns {Promise<any>} - Результат запроса.
      */
     async (path, params = null, cookie = null) => {
         try {
+
+            if (isObject(cookie)) {
+                cookie = getCookies.getStrCookie(cookie);
+            }
+
             const {data} = await axios.get(path, {
                 params,
                 headers: getHeaders(cookie),
             });
             
-            if (data.error === 6) {
-                console.log('Необходимо поменять куки cs.money');
+            const {error} = isObject(data) ? data : getOldResponseError(data);
+
+            if (error && (error === 6 || error === 19)) {
+                await getCookies.load();
+                console.log('Файлы cookie были обновлены');
             }
             
             return data;
@@ -29,6 +42,7 @@ export const get = ({
             return error?.response?.data;
         }
     };
+
 
 export default get({
     axios,

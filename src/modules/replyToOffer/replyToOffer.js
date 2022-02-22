@@ -8,12 +8,12 @@ export const replyToOffer = ({post}) =>
      * @param {string} cookie - Куки аккаунта
      * @returns {Promise<Object>} - Результат принятия обмена
      */
-    async (offerId, action, cookie) => {
+    async ({offerId, action, cookie, accountId}) => {
         try {
             const response = await post('https://cs.money/confirm_virtual_offer', {
                 action: action,
                 offer_id: offerId.toString(),
-            }, cookie);
+            }, cookie || {newCsm: true, accountId});
             
             // Не удалось подтвердить
             if (!response.status) {

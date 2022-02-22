@@ -57,13 +57,13 @@ export const transactionsLoader = ({
     
     /**
      * Получение offerId по id обмена
-     * @param {Object<string, string>} cookie - Куки файлы старой версии CSM.
      * @param {string} accountId - Ключ к нужному аккаунту.
+     * @param {Object<string, string>} cookie - Куки файлы старой версии CSM.
      * @param {number} merchantId - Id обмена.
      * @returns {number | undefined}
      */
     async getOfferId (cookie, accountId, merchantId) {
-        await this.load(cookie, {status: false, delay: 0}, [accountId]);
+        await this.load({status: false, delay: 0}, cookie, [accountId]);
         
         if (!this.accounts[accountId]) {
             return undefined;
@@ -82,26 +82,26 @@ export const transactionsLoader = ({
     
     /**
      * Обновление транзакций с сервера.
-     * @param {Object<string, string>} cookie - Куки файлы старой версии CSM.
-     *
      * @param {object?} repeatLoad - Обновлять ли повторно.
      * @param {boolean} repeatLoad.status - Обновлять ли повторно.
      * @param {number} repeatLoad.delay - Таймаут перед обновлением транзакций.
-     *
+     * 
+    * @param {Object<string, string>} cookie - Куки файлы старой версии CSM.
+    * 
      * @param {array?} requiredAccounts - Массив с ключами ко всем аккаунтам.
      *
      * @returns {Promise<void>}
      */
-    async load (cookie, repeatLoad = defaultSetting.repeatLoad.transactions,
+    async load (repeatLoad = defaultSetting.repeatLoad.transactions, cookie, 
         requiredAccounts = defaultSetting.getAccountIds()) {
         // Повторный запуск обновления
         const startReload = () => repeatLoad.status &&
-            setTimeout(() => this.load(cookie, repeatLoad, requiredAccounts), repeatLoad.delay);
+            setTimeout(() => this.load(repeatLoad, cookie, requiredAccounts), repeatLoad.delay);
         
         try {
             for (const accountId of requiredAccounts) {
                 // Получение транзакций
-                const transactions = await get('https://old.cs.money/get_transactions', null, cookie[accountId]);
+                const transactions = await get('https://old.cs.money/get_transactions', null, cookie || {oldCsm: true, accountId});
                 
                 if (transactions && Array.isArray(transactions)) {
                     this.accounts[accountId] = transactions;

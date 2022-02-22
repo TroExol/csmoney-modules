@@ -42,7 +42,7 @@ export const purchasesLoader = ({
      *
      * @returns {Promise<void>}
      */
-    async load (cookie, repeatLoad = defaultSetting.repeatLoad.purchases,
+    async load (cookie, repeatLoad = defaultSetting.repeatLoad.purchases,  
         requiredAccounts = defaultSetting.getAccountIds()) {
         // Повторный запуск обновления
         const startReload = () => repeatLoad.status &&
@@ -51,7 +51,7 @@ export const purchasesLoader = ({
         try {
             for (const accountId of requiredAccounts) {
                 // Получение покупок и продаж
-                const purchases = await get('https://old.cs.money/get_purchases', null, cookie[accountId]);
+                const purchases = await get('https://old.cs.money/get_purchases', null, cookie || {oldCsm: true, accountId});
                 
                 if (purchases && Array.isArray(purchases)) {
                     this.accounts[accountId] = purchases;
