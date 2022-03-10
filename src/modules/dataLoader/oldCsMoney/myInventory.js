@@ -125,7 +125,7 @@ export const myInventory = ({
                     });
                     
                     if (!Array.isArray(myInventory)) {
-                        const error = getOldResponseError(myInventory);
+                        const {error} = getOldResponseError(myInventory);
                         
                         if (error) {
                             console.log(error);

@@ -1,5 +1,7 @@
-const getOldResponseError = response => typeof response === 'string'
-    ? {error: Number(response.match(/(?<=\s|)\d+(?!\w)/)?.[0]) || undefined}
-    : undefined;
+const getOldResponseError = response => ({
+    error: typeof response === 'string'
+        ? Number(response.match(/(?<=\s|)\d+(?!\w)/)?.[0]) || undefined
+        : undefined
+});
 
 export default getOldResponseError;

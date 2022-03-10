@@ -1,6 +1,6 @@
 import axios from 'axios';
 import getHeaders from './headers.js';
-import {isObject, getOldResponseError} from '../../helpers/isObject.js';
+import {isObject, getOldResponseError} from '../../helpers/index.js';
 import {getCookies} from '../getCookies/index.js';
 
 export const get = ({

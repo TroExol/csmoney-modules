@@ -3,7 +3,7 @@ import Test from 'ava';
 import * as helpers from '../index.js';
 
 Test('Пакет экспортирует верное кол-во частей', t => {
-    t.is(Object.keys(helpers).length, 4);
+    t.is(Object.keys(helpers).length, 5);
 });
 
 Test('Пакет экспортирует isObject', t => {
@@ -20,4 +20,8 @@ Test('Пакет экспортирует unstackItems', t => {
 
 Test('Пакет экспортирует defaultSetting', t => {
     t.true('defaultSetting' in helpers);
+});
+
+Test('Пакет экспортирует getOldResponseError', t => {
+    t.true('getOldResponseError' in helpers);
 });
