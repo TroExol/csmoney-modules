@@ -1,5 +1,6 @@
 import {defaultSetting} from '../../helpers/index.js';
 import {sendOffer} from './index.js';
+import {countBadQueries} from '../generalInfo/index.js';
 
 /**
  * Подтверждение оффера
@@ -22,6 +23,10 @@ const sendOfferRecursively = async ({
     recursivelyFrequency,
 }) => {
     try {
+        if (!countBadQueries.canSend(accountId)) {
+            return false;
+        }
+        
         recursivelyDuration = recursivelyDuration || (isBuy
             ? defaultSetting.buyRecursivelyDuration
             : defaultSetting.sellRecursivelyDuration);

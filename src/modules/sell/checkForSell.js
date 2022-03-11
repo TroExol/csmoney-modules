@@ -1,46 +1,80 @@
 import {sell} from './index.js';
-import {purchases} from '../dataLoader/index.js';
-
-// TODO: вынести в отдельный файл, тк используется не только здесь
-const sellingItemIds = [];
+import {purchases, itemStatus} from '../dataLoader/index.js';
+import {defaultSetting, formatItemFromOldToNew} from '../../helpers/index.js';
+import {sellingProcesses} from '../generalInfo/index.js';
 
 /**
  * Проверка предметов на продажу
- * @param {string} cookie - Куки аккаунта
- * @param {string} accountId - Ключ к нужному аккаунту
- * @param {number} recursivelyDuration - Длительность отправки запросов (в миллисекундах)
- * @param {number} recursivelyFrequency - Периодичность отправки запросов (в миллисекундах)
- * @returns {Promise<boolean>} - Результат продажи
+ * @param {Object<string, string>} cookie - Куки
+ * @param {array?} requiredAccounts - Массив с ключами ко всем аккаунтам нужных игр
+ * @param {object?} repeatLoad - Обновлять ли повторно
+ * @param {boolean} repeatLoad.status - Обновлять ли повторно
+ * @param {number} repeatLoad.delay - Таймаут перед обновлением списка
  */
-const checkForSell = async ({
+const checkForSell = ({
     cookie,
-    accountId,
+    requiredAccounts = defaultSetting.getAccountIds(),
+    repeatLoad = defaultSetting.repeatLoad.checkForSell,
 }) => {
-    //TODO: проверять не определенный аккаунт, а все
-    try {
-        const items = purchases.getItemsInInventory(accountId);
-        
-        for (const item of items) {
-            //TODO: проверять откуда-то, что предмет не в оверстоке (checkStatuses?)
-            
-            // Добавление предмета в список продаваемых
-            sellingItemIds.push(item.current_assetid);
-            
-            //TODO: перевести формат предмета из старого в новый
-            
-            await sell({
-                items: [item],
-                isVirtual: true,
-                cookie,
-                accountId,
-            });
+    // Повторный запуск обновления
+    const startReload = () => repeatLoad.status &&
+        setTimeout(() => checkForSell({cookie, requiredAccounts, repeatLoad}), repeatLoad.delay);
     
-            // Удаление предмета из списка продаваемых
-            sellingItemIds.splice(sellingItemIds.indexOf(item.current_assetid), 1);
+    try {
+        for (const accountId of requiredAccounts) {
+            const items = purchases.getItemsInInventory(accountId);
+            
+            for (const item of items) {
+                const formattedItem = formatItemFromOldToNew(Number(item.appid), {
+                    id: [item.user_skin_id],
+                    // eslint-disable-next-line id-length
+                    o: item.name_id,
+                    vi: [1],
+                    // eslint-disable-next-line id-length
+                    p: item.price,
+                });
+                
+                if (!formattedItem.fullName) {
+                    console.log(`Не удалось найти название предмета с nameId ${formattedItem.nameId}`);
+                    continue;
+                }
+                
+                if (!itemStatus.check(formattedItem.fullName, formattedItem.appId, 1)) {
+                    continue;
+                }
+                
+                if (sellingProcesses.countProcesses(accountId) >= defaultSetting.maxCountParallelsSelling) {
+                    console.log(`Превышено кол-во одновременных процессов продажи (${sellingProcesses.countProcesses(accountId)})`);
+                    break;
+                }
+    
+                const processId = Symbol();
+                
+                // Добавление процесса продажи
+                sellingProcesses.add(accountId, processId, [formattedItem.id]);
+                
+                //TODO: смотреть в файле, что предмет куплен ботом
+    
+                // Замыкание для того, чтобы по окончании продажи удалились правильные id
+                (() => {
+                    const innerProcessId = processId;
+                    const innerItemIds = [formattedItem.id];
+                    
+                    sell({
+                        items: [formattedItem],
+                        isVirtual: true,
+                        cookie: cookie[accountId],
+                        accountId,
+                    }).then(() =>
+                        // Удаление процесса продажи
+                        sellingProcesses.remove(accountId, innerProcessId, innerItemIds));
+                })();
+            }
         }
     } catch (error) {
         console.log('checkForSell unexpected error:', error);
-        return false;
+    } finally {
+        startReload();
     }
 };
 

@@ -1,6 +1,7 @@
 import {get} from '../../senders/index.js';
 import {defaultSetting, unstackItems} from '../../../helpers/index.js';
 import getOldResponseError from '../../../helpers/getOldResponseError.js';
+import {countBadQueries} from '../../generalInfo/index.js';
 
 /**
  * Мой инвентарь
@@ -110,6 +111,10 @@ export const myInventory = ({
         
         try {
             for (const accountId of requiredAccounts) {
+                if (!countBadQueries.canSend(accountId)) {
+                    continue;
+                }
+                
                 // Проверка на существования данных для нужного аккаунта.
                 if (!this.accounts[accountId]) {
                     this.accounts[accountId] = {};
@@ -130,6 +135,7 @@ export const myInventory = ({
                         if (error) {
                             console.log(error);
                             this.accounts[accountId][appId].error = error;
+                            countBadQueries.increase(accountId);
                         }
                         continue;
                     }

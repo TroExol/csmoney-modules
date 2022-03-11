@@ -1,8 +1,13 @@
 import {post} from '../senders/index.js';
+import {countBadQueries} from '../generalInfo/index.js';
 
 export const replyToOffer = ({post}) =>
     async ({offerId, action, cookie, accountId}) => {
         try {
+            if (!countBadQueries.canSend(accountId)) {
+                return false;
+            }
+            
             const response = await post('https://cs.money/confirm_virtual_offer', {
                 action: action,
                 offer_id: offerId.toString(),
@@ -11,6 +16,7 @@ export const replyToOffer = ({post}) =>
             // Не удалось подтвердить
             if (!response.status) {
                 console.log('replyToOffer response on error:', response);
+                countBadQueries.increase(accountId);
                 return false;
             }
             

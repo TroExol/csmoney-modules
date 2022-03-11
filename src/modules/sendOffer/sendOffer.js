@@ -1,4 +1,5 @@
 import {post} from '../senders/index.js';
+import {buyingProcesses, countBadQueries, sellingProcesses} from '../generalInfo/index.js';
 
 /**
  * Подтверждение оффера
@@ -11,6 +12,34 @@ import {post} from '../senders/index.js';
  */
 const sendOffer = async ({items, isVirtual, isBuy, cookie, accountId}) => {
     try {
+        if (!countBadQueries.canSend(accountId)) {
+            return false;
+        }
+        
+        let clearItems = [...items];
+        
+        for (const item of clearItems) {
+            if (isBuy) {
+                if (buyingProcesses.isBuying(accountId, item.id)) {
+                    continue;
+                }
+    
+                console.log(`Предмет ${item.fullName} уже в процессе покупки`);
+                clearItems = clearItems.filter(({id}) => id !== item.id);
+            } else {
+                if (sellingProcesses.isSelling(accountId, item.id)) {
+                    continue;
+                }
+                
+                console.log(`Предмет ${item.fullName} уже в продаже`);
+                clearItems = clearItems.filter(({id}) => id !== item.id);
+            }
+        }
+        
+        if (!clearItems.length) {
+            return false;
+        }
+        
         const response = await post('https://cs.money/2.0/send_offer', {
             balance: items.reduce((sum, item) => sum + item.price, 0) * (isBuy ? -1 : 1),
             games: {},
@@ -24,6 +53,7 @@ const sendOffer = async ({items, isVirtual, isBuy, cookie, accountId}) => {
         // Не удалось подтвердить
         if (response?.error) {
             console.log('sendOffer response on error:', response);
+            countBadQueries.increase(accountId);
             return false;
         }
         

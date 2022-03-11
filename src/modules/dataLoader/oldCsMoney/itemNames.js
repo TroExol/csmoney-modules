@@ -17,11 +17,16 @@ export const itemNamesLoader = ({
     
     /**
      * Получение названий предметов.
-     * @param {number | string} [appId] - Массив с id нужных игр.
-     * @returns {{730: Object<string, {m: string}> | undefined, 570: Object<string, {m: string}> | undefined} | Object<string, {m: string}> | undefined}
+     * @param {number | string} [appId] - Id нужной игры.
+     * @param {number} [nameId] - Id названия предмета.
+     * @returns {{730: Object<string, {m: string}> | undefined, 570: Object<string, {m: string}> | undefined} | Object<string, {m: string}> | string | undefined}
      */
-    get (appId) {
-        return appId ? this.nameId[appId] : this.nameId;
+    get (appId, nameId) {
+        return appId
+            ? nameId
+                ? this.nameId[appId][nameId]?.m
+                : this.nameId[appId]
+            : this.nameId;
     },
     
     /**

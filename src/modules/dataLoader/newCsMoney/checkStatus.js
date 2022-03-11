@@ -17,19 +17,17 @@ export const itemStatus = ({
      * @param {string} itemName - Имя предмета.
      * @param {number} appId - Id игры.
      * @param {number} limitOverstock - Допустимый предел оверстока.
-     * @returns {boolean | number}
+     * @returns {boolean}
      */
     check (itemName, appId, limitOverstock = defaultSetting.limitOverstock) {
         return (!this.status[appId][itemName])
             ? true
-            : (this.status[appId][itemName] !== 'Unavailable' && this.status[appId][itemName] > limitOverstock)
-                ? this.status[appId][itemName]
-                : false;
+            : this.status[appId][itemName] !== 'Unavailable' && this.status[appId][itemName] >= limitOverstock;
     },
     /**
      * Получение оверстоков.
      * @param {string | number} [appId] - id необходимой игры.
-     * @returns {Object<string, Object.<string, number | string>> | undefined}
+     * @returns {Object<string, Object<string, number | string>> | undefined}
      */
     get (appId) {
         return appId ? this.status[appId] : this.status;

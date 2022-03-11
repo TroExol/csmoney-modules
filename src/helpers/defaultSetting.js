@@ -50,7 +50,7 @@ const defaultSetting = {
     /**
      * @type {Number} - Задержка перед подключением к WS (в миллисекундах).
      */
-    delayReconnectWS: 60000,
+    delayReconnectWS: 30000,
     /**
      * @type {Number} - Максимальное количество параллельных покупок для аккаунта.
      */
@@ -88,32 +88,36 @@ const defaultSetting = {
      */
     repeatLoad: {
         myInventory: {
-            status: false,
-            delay: 0,
+            status: true,
+            delay: 50000,
         },
         itemNames: {
-            status: false,
-            delay: 0,
+            status: true,
+            delay: 30 * 60000,
         },
         checkStatus: {
-            status: false,
-            delay: 0,
+            status: true,
+            delay: 60000,
         },
         balance: {
-            status: false,
-            delay: 0,
+            status: true,
+            delay: 60000,
         },
         transactions: {
             status: false,
             delay: 0,
         },
         purchases: {
-            status: false,
-            delay: 0,
+            status: true,
+            delay: 50000,
         },
         confirmOffer: {
-            status: false,
-            delay: 0,
+            status: true,
+            delay: 60000,
+        },
+        checkForSell: {
+            status: true,
+            delay: 1.5 * 60000,
         }
     },
     /** Установка значений по умолчанию.

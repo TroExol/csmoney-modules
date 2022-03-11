@@ -3,11 +3,13 @@ import input from './input.js';
 import defaultSetting from './defaultSetting.js';
 import unstackItems from './unstackItems.js';
 import getOldResponseError from './getOldResponseError.js';
+import formatItemFromOldToNew from './formatItemFromOldToNew.js';
 
 export {
     isObject,
     input,
     unstackItems,
     defaultSetting,
-    getOldResponseError
+    getOldResponseError,
+    formatItemFromOldToNew,
 };
