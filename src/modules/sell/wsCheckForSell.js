@@ -60,6 +60,11 @@ const wsCheckForSell = ({
                         break;
                     }
                     
+                    if (sellingProcesses.isSelling(accountId, formattedItem.id)) {
+                        console.log(`Предмет ${formattedItem.fullName} уже в продаже`);
+                        continue;
+                    }
+                    
                     const processId = Symbol();
                     
                     // Добавление процесса продажи

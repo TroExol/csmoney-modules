@@ -1,5 +1,5 @@
 import {post} from '../senders/index.js';
-import {buyingProcesses, countBadQueries, sellingProcesses} from '../generalInfo/index.js';
+import {countBadQueries} from '../generalInfo/index.js';
 
 /**
  * Подтверждение оффера
@@ -13,30 +13,6 @@ import {buyingProcesses, countBadQueries, sellingProcesses} from '../generalInfo
 const sendOffer = async ({items, isVirtual, isBuy, cookie, accountId}) => {
     try {
         if (!countBadQueries.canSend(accountId)) {
-            return false;
-        }
-        
-        let clearItems = [...items];
-        
-        for (const item of clearItems) {
-            if (isBuy) {
-                if (buyingProcesses.isBuying(accountId, item.id)) {
-                    continue;
-                }
-    
-                console.log(`Предмет ${item.fullName} уже в процессе покупки`);
-                clearItems = clearItems.filter(({id}) => id !== item.id);
-            } else {
-                if (sellingProcesses.isSelling(accountId, item.id)) {
-                    continue;
-                }
-                
-                console.log(`Предмет ${item.fullName} уже в продаже`);
-                clearItems = clearItems.filter(({id}) => id !== item.id);
-            }
-        }
-        
-        if (!clearItems.length) {
             return false;
         }
         
