@@ -35,11 +35,7 @@ const sell = async ({
         }
         
         if (isVirtual) {
-            const confirm = await replyToOffer({offerId, action: 'confirm', cookie, accountId});
-    
-            if (!confirm) {
-                return false;
-            }
+            await replyToOffer({offerId, action: 'confirm', cookie, accountId});
     
             //TODO: в файле в предмете ставится флаг, что предмет продан. Желательно сделать отдельной функцией,
             // чтобы можно было вызвать при подтверждении обмена в стиме, если продажа из инвентаря стима (хз будет ли такой кейс)
