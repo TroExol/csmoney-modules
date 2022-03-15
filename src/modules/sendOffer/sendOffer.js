@@ -1,4 +1,5 @@
 import {post} from '../senders/index.js';
+import {balance, myInventory} from '../dataLoader/index.js';
 import {countBadQueries} from '../generalInfo/index.js';
 
 /**
@@ -15,9 +16,9 @@ const sendOffer = async ({items, isVirtual, isBuy, cookie, accountId}) => {
         if (!countBadQueries.canSend(accountId)) {
             return false;
         }
-        
+        const price = Number(items.reduce((sum, item) => sum + item.price, 0));
         const response = await post('https://cs.money/2.0/send_offer', {
-            balance: items.reduce((sum, item) => sum + item.price, 0) * (isBuy ? -1 : 1),
+            balance: price * (isBuy ? -1 : 1),
             games: {},
             isVirtual,
             skins: {
@@ -37,6 +38,18 @@ const sendOffer = async ({items, isVirtual, isBuy, cookie, accountId}) => {
         
         if (!offerId) {
             return false;
+        }
+    
+        if (isBuy) {
+            balance.decrease(accountId, price);
+            for (const item of items) {
+                myInventory.add(accountId, item);
+            }
+        } else {
+            balance.increase(accountId, price);
+            for (const item of items) {
+                myInventory.remove(accountId, item);
+            }
         }
         
         return offerId;

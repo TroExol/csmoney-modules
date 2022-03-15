@@ -1,5 +1,5 @@
 import {get} from '../../senders/index.js';
-import {defaultSetting, unstackItems} from '../../../helpers/index.js';
+import {defaultSetting, unstackItems, formatItemFromNewToOld} from '../../../helpers/index.js';
 import getOldResponseError from '../../../helpers/getOldResponseError.js';
 import {countBadQueries} from '../../generalInfo/index.js';
 
@@ -23,10 +23,15 @@ export const myInventory = ({
      * @param {string | number} [appId] - id необходимой игры.
      */
     add (accountId, itemInfo, appId) {
-        if (!this.accounts[accountId][itemInfo.appId || appId].itemsCsm[itemInfo.o]) {
-            this.accounts[accountId][itemInfo.appId || appId].itemsCsm[itemInfo.o] = [];
+        let item = {...itemInfo};
+        if (itemInfo.nameId) {
+            item = formatItemFromNewToOld(item.appId || appId, itemInfo);
         }
-        this.accounts[accountId][itemInfo.appId || appId].itemsCsm[itemInfo.o].push(itemInfo);
+        
+        if (!this.accounts[accountId][item.appId || appId].itemsCsm[item.o]) {
+            this.accounts[accountId][item.appId || appId].itemsCsm[item.o] = [];
+        }
+        this.accounts[accountId][item.appId || appId].itemsCsm[item.o].push(item);
     },
     
     /**
@@ -37,11 +42,16 @@ export const myInventory = ({
      * @param {string | number} [appId] - id необходимой игры.
      */
     remove (accountId, itemInfo, appId) {
-        this.accounts[accountId][itemInfo.appId || appId].itemsCsm[itemInfo.o] =
-            this.accounts[accountId][itemInfo.appId || appId].itemsCsm[itemInfo.o].filter(value => value.id[0] !== itemInfo.id[0]);
+        let item = {...itemInfo};
+        if (itemInfo.nameId) {
+            item = formatItemFromNewToOld(item.appId || appId, itemInfo);
+        }
         
-        if (this.accounts[accountId][itemInfo.appId || appId].itemsCsm[itemInfo.o].length === 0) {
-            delete this.accounts[accountId][itemInfo.appId || appId].itemsCsm[itemInfo.o];
+        this.accounts[accountId][item.appId || appId].itemsCsm[item.o] =
+            this.accounts[accountId][item.appId || appId].itemsCsm[item.o].filter(value => value.id[0] !== item.id[0]);
+        
+        if (this.accounts[accountId][item.appId || appId].itemsCsm[item.o].length === 0) {
+            delete this.accounts[accountId][item.appId || appId].itemsCsm[item.o];
         }
     },
     
