@@ -39,13 +39,18 @@ const getCookies = {
     },
     /**
      * Проверка cookie файлов.
-     * @param {Object} cookies - Объект с файлами cookie для провери. Можно передать cookie одновременно для новой и старой версии.
-     * @param {String} cookies.oldCsm - Строка cookie для старой версии CSM.
-     * @param {String} cookies.newCsm - Строка cookie для новой версии CSM.
-     * @returns {Boolean | undefined}
+     * @param {{oldCsm: Boolean?, newCsm: Boolean?, accountId: (Number | String)?}} cookies - Для проверки в обьекте надо указать oldCsm/newCsm (можно передать куки сразу для обеих версий сайта), значения которых должно являться строкой куки файлов. Или пережать [accountId], тогда проверка будет сразу для обеих версий сайта, для конкретного аккаунта.
+     * @returns {Promise<Boolean | undefined>}
      */
     async checkCookie(cookies) {
         try {
+            if (cookies.accountId) {
+                cookies = {
+                    oldCsm: this.getStrCookie(cookies.accountId, {oldCsm: true}),
+                    newCsm: this.getStrCookie(cookies.accountId, {newCsm: true})
+                };
+            }
+
             for (const site in cookies) {
      
                 const {headers} = await axios(
@@ -57,11 +62,14 @@ const getCookies = {
                 );
                 
                 const setCookie = headers['set-cookie'].join('');
-                const isLoggedIn = setCookie.includes('registered_user=true') || setCookie.includes('registered_user=true');
+                const isLoggedIn = setCookie.includes('sLoggedIn=true') || setCookie.includes('registered_user=true');
 
                 if (isLoggedIn) {
                     return true;
                 }
+
+                await this.load();
+                console.log('Файлы cookie были обновлены');
             }
         } catch (error) {
             console.log('Отсутствуют файлы cookie');

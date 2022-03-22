@@ -5,15 +5,14 @@ import {getCookies} from '../getCookies/index.js';
 
 export const get = ({
     axios,
-    getHeaders,
-    console
+    getHeaders
 }) =>
     /**
      * GET запрос.
      * @param {String} path - Ссылка для запроса.
      * @param {Object | null} params - Параметры запроса.
      * @param {String | Object | null} cookie - Может быть строкой файлов куки. Или объектом с параметрами для получения нужных куки для указанного аккаунта.
-     * @param {String | Number} [cookie.accountId ] - Id аккаeнта для которого требуются cookie.
+     * @param {String | Number} [cookie.accountId] - Id аккаeнта для которого требуются cookie.
      * @param {true} [cookie.oldCsm] - 
      *  @param {true} [cookie.newCsm] - 
      * @returns {Promise<any>} - Результат запроса.
@@ -33,8 +32,10 @@ export const get = ({
             const {error} = isObject(data) ? data : getOldResponseError(data);
 
             if (error && (error === 6 || error === 19)) {
-                await getCookies.load();
-                console.log('Файлы cookie были обновлены');
+                const workСookie = await getCookies.checkCookie({accountId: cookie.accountId});
+                if (!workСookie) {
+                    return await get(path, params, cookie);
+                }
             }
             
             return data;

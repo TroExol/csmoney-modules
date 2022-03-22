@@ -1,6 +1,6 @@
 import {defaultSetting} from '../../helpers/index.js';
 
-const countBadQueries = {
+const permissionSendOffer = {
     accounts: {},
     
     canSend (accountId) {
@@ -13,10 +13,23 @@ const countBadQueries = {
             console.log(`Достигнут порог отправки запросов за ${(defaultSetting.badQueriesTime / 60000).toFixed(2)} минут (${defaultSetting.maxBadQueriesByTime})`);
             return false;
         }
+
+        if (this.accounts[accountId].banned) {
+            console.log(`Аккаунт ${accountId} был забанен.`);
+            return false;
+        }
         
+        if (this.accounts[accountId].timeOut) {
+            return false;
+        }
+
         return true;
     },
-    
+
+    gotBanned (accountId) {
+        this.accounts[accountId].banned = true;
+    },
+
     increase (accountId) {
         if (!this.accounts[accountId]) {
             this.accounts[accountId].count = 0;
@@ -25,6 +38,17 @@ const countBadQueries = {
         
         this.accounts[accountId].count++;
     },
+    
+    setTimeOut (accountId, min = 10) {
+
+        this.accounts[accountId].timeOut = true;
+        console.log(`Перерыв для аккаунта ${accountId} на ${min} минут :(`);
+
+        setTimeout(() => {
+            this.accounts[accountId].timeOut = false;
+            console.log(`Перерыв для аккаунта ${accountId} закончен :)`);
+        }, min * 60000);
+    }
 };
 
-export default countBadQueries;
+export default permissionSendOffer;

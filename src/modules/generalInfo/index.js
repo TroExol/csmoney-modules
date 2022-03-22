@@ -1,9 +1,9 @@
 import sellingProcesses from './sellingProcesses.js';
 import buyingProcesses from './buyingProcesses.js';
-import countBadQueries from './countBadQueries.js';
+import permissionSendOffer from './permissionSendOffer.js';
 
 export {
     sellingProcesses,
     buyingProcesses,
-    countBadQueries,
+    permissionSendOffer,
 };
