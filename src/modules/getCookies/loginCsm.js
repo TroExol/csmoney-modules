@@ -62,7 +62,7 @@ const getCookies = {
                 );
                 
                 const setCookie = headers['set-cookie'].join('');
-                const isLoggedIn = setCookie.includes('sLoggedIn=true') || setCookie.includes('registered_user=true');
+                const isLoggedIn = setCookie.includes('isLoggedIn=true') || setCookie.includes('registered_user=true');
 
                 if (isLoggedIn) {
                     return true;
