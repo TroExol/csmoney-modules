@@ -1,10 +1,10 @@
 import {post} from '../senders/index.js';
-import {countBadQueries} from '../generalInfo/index.js';
+import {permissionSendOffer} from '../generalInfo/index.js';
 
 export const replyToOffer = ({post}) =>
     async ({offerId, action, cookie, accountId}) => {
         try {
-            if (!countBadQueries.canSend(accountId)) {
+            if (!permissionSendOffer.canSend(accountId)) {
                 return false;
             }
             
@@ -16,7 +16,7 @@ export const replyToOffer = ({post}) =>
             // Не удалось подтвердить
             if (!response.status) {
                 console.log('replyToOffer response on error:', response);
-                countBadQueries.increase(accountId);
+                permissionSendOffer.increase(accountId);
                 return false;
             }
             
