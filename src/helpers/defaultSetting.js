@@ -62,7 +62,7 @@ const defaultSetting = {
     /**
      * @type {Number} - Длительность рекурсивной покупки (в миллисекундах).
      */
-    buyRecursivelyDuration: 30000,
+    buyRecursivelyDuration: 35000,
     /**
      * @type {Number} - Периодичность отправки запросов рекурсивной покупки (в миллисекундах).
      */

@@ -1,6 +1,6 @@
 import {post} from '../senders/index.js';
 import {balance, myInventory} from '../dataLoader/index.js';
-import {countBadQueries} from '../generalInfo/index.js';
+import {permissionSendOffer} from '../generalInfo/index.js';
 
 /**
  * Подтверждение оффера
@@ -13,7 +13,7 @@ import {countBadQueries} from '../generalInfo/index.js';
  */
 const sendOffer = async ({items, isVirtual, isBuy, cookie, accountId}) => {
     try {
-        if (!countBadQueries.canSend(accountId)) {
+        if (!permissionSendOffer.canSend(accountId)) {
             return false;
         }
         const price = Number(items.reduce((sum, item) => sum + item.price, 0));
@@ -29,8 +29,12 @@ const sendOffer = async ({items, isVirtual, isBuy, cookie, accountId}) => {
         
         // Не удалось подтвердить
         if (response?.error) {
+            if (response.error === 9999) {
+                permissionSendOffer.setTimeOut();
+            }
+
             console.log('sendOffer response on error:', response);
-            countBadQueries.increase(accountId);
+            permissionSendOffer.increase(accountId);
             return false;
         }
         

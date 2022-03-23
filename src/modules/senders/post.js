@@ -5,8 +5,7 @@ import getHeaders from './headers.js';
 
 export const post = ({
     axios,
-    getHeaders,
-    console,
+    getHeaders
 }) =>
     /**
      * POST запрос
@@ -28,8 +27,10 @@ export const post = ({
             const {error} = isObject(data) ? data : getOldResponseError(data);
 
             if (error && (error === 6 || error === 19)) {
-                await getCookies.load();
-                console.log('Файлы cookie были обновлены');
+                const workСookie = await getCookies.checkCookie({accountId: cookie.accountId});
+                if (!workСookie) {
+                    return await post(path, params, cookie);
+                }
             }
             
             return data;
