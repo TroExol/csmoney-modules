@@ -39,7 +39,7 @@ const getCookies = {
     },
     /**
      * Проверка cookie файлов.
-     * @param {{oldCsm: Boolean?, newCsm: Boolean?, accountId: (Number | String)?}} cookies - Для проверки в обьекте надо указать oldCsm/newCsm (можно передать куки сразу для обеих версий сайта), значения которых должно являться строкой куки файлов. Или пережать [accountId], тогда проверка будет сразу для обеих версий сайта, для конкретного аккаунта.
+     * @param {{oldCsm: Boolean?, newCsm: Boolean?, accountId: (Number | String)?}} cookies - Для проверки в обьекте надо указать oldCsm/newCsm (можно передать куки сразу для обеих версий сайта), значения которых должно быть true | false. Или пережать [accountId], тогда проверка будет сразу для обеих версий сайта, для конкретного аккаунта.
      * @returns {Promise<Boolean | undefined>}
      */
     async checkCookie(cookies) {
@@ -62,7 +62,7 @@ const getCookies = {
                 );
                 
                 const setCookie = headers['set-cookie'].join('');
-                const isLoggedIn = setCookie.includes('sLoggedIn=true') || setCookie.includes('registered_user=true');
+                const isLoggedIn = setCookie.includes('isLoggedIn=true') || setCookie.includes('registered_user=true');
 
                 if (isLoggedIn) {
                     return true;
