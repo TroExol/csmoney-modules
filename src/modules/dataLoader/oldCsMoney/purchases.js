@@ -1,5 +1,6 @@
 import {get} from '../../senders/index.js';
 import {defaultSetting} from '../../../helpers/index.js';
+import chalk from 'chalk';
 
 /**
  * Список транзакций пользователя.
@@ -50,6 +51,7 @@ export const purchasesLoader = ({
         
         try {
             for (const accountId of requiredAccounts) {
+                console.log(`Загрузка покупок для пользователя ${accountId}`);
                 // Получение покупок и продаж
                 const purchases = await get('https://old.cs.money/get_purchases', null, cookie || {oldCsm: true, accountId});
                 
@@ -58,7 +60,7 @@ export const purchasesLoader = ({
                 }
             }
         } catch (error) {
-            console.log('Ошибка при получении списка покупок и продаж', error);
+            console.log(chalk.red.underline('Ошибка при получении списка покупок и продаж'), error);
         } finally {
             startReload();
         }

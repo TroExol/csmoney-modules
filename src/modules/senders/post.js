@@ -27,8 +27,8 @@ export const post = ({
             const {error} = isObject(data) ? data : getOldResponseError(data);
 
             if (error && (error === 6 || error === 19)) {
-                const workСookie = await getCookies.checkCookie({accountId: cookie.accountId});
-                if (!workСookie) {
+                const workCookie = await getCookies.checkCookie({accountId: cookie.accountId});
+                if (!workCookie) {
                     return await post(path, params, cookie);
                 }
             }

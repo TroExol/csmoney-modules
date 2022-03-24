@@ -1,6 +1,7 @@
 import {defaultSetting} from '../../helpers/index.js';
 import {sendOffer} from './index.js';
 import {permissionSendOffer} from '../generalInfo/index.js';
+import chalk from 'chalk';
 
 /**
  * Подтверждение оффера
@@ -56,7 +57,7 @@ const sendOfferRecursively = async ({
         
         return false;
     } catch (error) {
-        console.log('sendOfferRecursively unexpected error:', error);
+        console.log(chalk.red.underline('sendOfferRecursively unexpected error:'), error);
         return false;
     }
 };

@@ -4,6 +4,7 @@ import axios from 'axios';
 import {createDetails, getCookieCSM, createHeaders} from './CsMoneyAuthorization/index.js';
 import {defaultSetting} from '../../helpers/index.js';
 import {sortCookie} from './sortCookie.js';
+import chalk from 'chalk';
 
 
 const steam = new SteamCommunity;
@@ -18,7 +19,7 @@ const url = {
 const getCookies = {
     accounts: {},
     set(cookies) {
-        this.accounts[cookies];
+        this.accounts = cookies;
     },
     
     /**
@@ -46,8 +47,8 @@ const getCookies = {
         try {
             if (cookies.accountId) {
                 cookies = {
-                    oldCsm: this.getStrCookie(cookies.accountId, {oldCsm: true}),
-                    newCsm: this.getStrCookie(cookies.accountId, {newCsm: true})
+                    oldCsm: this.getStrCookie({accountId: cookies.accountId, oldCsm: true}),
+                    newCsm: this.getStrCookie({accountId: cookies.accountId, newCsm: true})
                 };
             }
 
@@ -69,30 +70,30 @@ const getCookies = {
                 }
 
                 await this.load();
-                console.log('Файлы cookie были обновлены');
+                console.log(chalk.green('Файлы cookie были обновлены'));
             }
         } catch (error) {
-            console.log('Отсутствуют файлы cookie');
+            console.log(chalk.red.underline('checkCookie: Отсутствуют файлы cookie'), error);
         }
     },
 
     /**
      * Загрузка cookie файлов для CSM.
      * @param {Array} detailsList - Массив объектов details, с данными Steam аккаунтов.
-     * @param {Object} receiveСookie - Объект с парраметрами для какой версии CSM нужно плучать cookie.
+     * @param {Object} receiveCookie - Объект с парраметрами для какой версии CSM нужно плучать cookie.
      */
-    async load(detailsList = defaultSetting.getAccountDetails(), receiveСookie = defaultSetting.receiveСookie) {
+    async load(detailsList = defaultSetting.getAccountDetails(), receiveCookie = defaultSetting.receiveCookie) {
 
         for (const details of detailsList) {
 
             // Получаем cookie файлы и записываем в переменную SteamId.
             const accountId = await this.loadCookieSteam(details);
             
-            if (receiveСookie.oldCsm) {
+            if (receiveCookie.oldCsm) {
                 await this.loadCookieOldCsm(accountId);
             }
 
-            if (receiveСookie.newCsm) {
+            if (receiveCookie.newCsm) {
                 await this.loadCookieNewCsm(accountId);
             }
         }
@@ -112,9 +113,8 @@ const getCookies = {
 
         return await new Promise(reslove => {
             steam.login(createDetails(details), (err, sessionID, cookie) => {
-
                 if (err) {
-                    throw new Error('Не удалось полчить cookie файлы Steam. Проверьте правильно ли был заполнен парамет details и попробуйте ещё раз.');
+                    throw new Error('Не удалось получить cookie файлы Steam. Проверьте правильно ли был заполнен парамет details и попробуйте ещё раз.');
                 }
 
                 steam.getClientLogonToken((err, {steamID}) => {
@@ -159,7 +159,7 @@ const getCookies = {
                 })
             );
         } catch (error) {
-            console.log('Ошибка при получении Cookie файлов old.cs.money!', error.message);
+            console.log(chalk.red.underline('Ошибка при получении Cookie файлов old.cs.money!'), error.message);
         }
     },
     /**
@@ -180,7 +180,7 @@ const getCookies = {
                 })
             );
         } catch (error) {
-            console.log('Ошибка при получении Cookie файлов cs.money!', error.message);
+            console.log(chalk.red.underline('Ошибка при получении Cookie файлов cs.money!'), error.message);
         }
     }
 };

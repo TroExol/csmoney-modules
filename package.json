@@ -23,6 +23,7 @@
   "type": "module",
   "dependencies": {
     "axios": "^0.24.0",
+    "chalk": "^5.0.1",
     "steamcommunity": "^3.44.0",
     "ws": "^8.4.0"
   },

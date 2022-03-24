@@ -6,6 +6,7 @@ import {
 } from '../../../helpers/index.js';
 import getOldResponseError from '../../../helpers/getOldResponseError.js';
 import {permissionSendOffer} from '../../generalInfo/index.js';
+import chalk from 'chalk';
 
 /**
  * Мой инвентарь
@@ -157,24 +158,26 @@ export const myInventory = ({
                 }
 
                 for (const appId of appIdList) {
+                    console.log(`Загрузка инвентаря для пользователя ${accountId} игры ${appId}`);
                     const myInventory = await get(
                         `https://old.cs.money/${appId}/load_user_inventory`,
                         null,
                         cookie || {oldCsm: true, accountId}
                     );
 
-                    !this.accounts[accountId][appId] &&
-            (this.accounts[accountId][appId] = {
-                itemsCsm: {},
-                itemsSteam: {},
-                error: false,
-            });
+                    if (!this.accounts[accountId][appId]) {
+                        this.accounts[accountId][appId] = {
+                            itemsCsm: {},
+                            itemsSteam: {},
+                            error: false,
+                        };
+                    }
 
                     if (!Array.isArray(myInventory)) {
                         const {error} = getOldResponseError(myInventory);
 
                         if (error) {
-                            console.log(error);
+                            console.log(chalk.red.underline(`Получение инвентаря аккаунта ${accountId} игры ${appId} вернуло ошибку:`), error);
                             this.accounts[accountId][appId].error = error;
                             permissionSendOffer.increase(accountId);
                         }
@@ -221,7 +224,7 @@ export const myInventory = ({
                 }
             }
         } catch (error) {
-            console.log('Ошибка при обновлении инвентаря', error);
+            console.log(chalk.red.underline('Ошибка при обновлении инвентаря'), error);
         } finally {
             startReload();
         }

@@ -1,6 +1,7 @@
 import {post} from '../senders/index.js';
 import {balance, myInventory} from '../dataLoader/index.js';
 import {permissionSendOffer} from '../generalInfo/index.js';
+import chalk from 'chalk';
 
 /**
  * Подтверждение оффера
@@ -33,7 +34,7 @@ const sendOffer = async ({items, isVirtual, isBuy, cookie, accountId}) => {
                 permissionSendOffer.setTimeOut();
             }
 
-            console.log('sendOffer response on error:', response);
+            console.log(chalk.red.underline('sendOffer response on error:'), response);
             permissionSendOffer.increase(accountId);
             return false;
         }
@@ -58,7 +59,7 @@ const sendOffer = async ({items, isVirtual, isBuy, cookie, accountId}) => {
         
         return offerId;
     } catch (error) {
-        console.log('sendOffer unexpected error:', error);
+        console.log(chalk.red.underline('sendOffer unexpected error:'), error);
         return false;
     }
 };

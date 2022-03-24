@@ -1,4 +1,5 @@
 import {get} from '../../senders/index.js';
+import chalk from 'chalk';
 
 /**
  * Список названий предметов
@@ -31,6 +32,7 @@ export const salesHistory = ({
      */
     async load (appId, itemNameId) {
         try {
+            console.log(`Загрузка истории покупок для предмета с id названия ${itemNameId} игры ${appId}`);
             // Получение названий предмета
             const history = await get('https://old.cs.money/market_sales', {
                 appId,
@@ -40,7 +42,7 @@ export const salesHistory = ({
             
             // Не удалось получить названия предметов
             if (!Array.isArray(history)) {
-                console.log(`Не удалось получить историю покупок appId: ${appId} itemNameId: ${itemNameId}`, history);
+                console.log(chalk.red.underline(`Не удалось получить историю покупок для предмета с id названия ${itemNameId} игры ${appId}`), history);
                 return [];
             }
             
@@ -51,7 +53,7 @@ export const salesHistory = ({
             
             return history;
         } catch (error) {
-            console.log(`Ошибка при получении истории покупок appId: ${appId} itemNameId: ${itemNameId}`, error);
+            console.log(chalk.red.underline(`Ошибка при получении истории покупок appId: ${appId} itemNameId: ${itemNameId}`), error);
             return [];
         }
     },

@@ -1,5 +1,6 @@
 import {sendOfferRecursively} from '../sendOffer/index.js';
 import {replyToOffer} from '../replyToOffer/index.js';
+import chalk from 'chalk';
 
 /**
  * Продажа предмета
@@ -43,7 +44,7 @@ const sell = async ({
         
         return true;
     } catch (error) {
-        console.log('sell unexpected error:', error);
+        console.log(chalk.red.underline('sell unexpected error:'), error);
         return false;
     }
 };

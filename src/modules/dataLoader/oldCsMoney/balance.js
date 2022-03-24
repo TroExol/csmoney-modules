@@ -1,5 +1,6 @@
 import {get} from '../../senders/index.js';
 import {defaultSetting} from '../../../helpers/index.js';
+import chalk from 'chalk';
 
 /**
  * Мой баланс
@@ -41,7 +42,7 @@ export const myBalance = ({
     
     /**
      * Обновление баланса с сервера
-     * @param {Object<string, string>} cookie - Куки
+     * @param {Object<string, string>?} cookie - Куки
      *
      * @param {object?} repeatLoad - Обновлять ли повторно
      * @param {boolean} repeatLoad.status - Обновлять ли повторно
@@ -58,8 +59,9 @@ export const myBalance = ({
         
         try {
             for (const accountId of requiredAccounts) {
+                console.log(`Загрузка баланса для пользователя ${accountId}`);
                 // Получение баланса
-                const userInfo = await get('https://old.cs.money/user_info', null, cookie[accountId] || {oldCsm: true, accountId});
+                const userInfo = await get('https://old.cs.money/user_info', null, cookie?.[accountId] || {oldCsm: true, accountId});
                     
                 // Не удалось получить баланс
                 if (!userInfo.balance && userInfo.balance !== 0) {
@@ -68,7 +70,7 @@ export const myBalance = ({
                 this.accounts[accountId] = userInfo.balance;
             }
         } catch (error) {
-            console.log('Ошибка при обновлении баланса', error);
+            console.log(chalk.red.underline('Ошибка при обновлении баланса'), error);
         } finally {
             startReload();
         }

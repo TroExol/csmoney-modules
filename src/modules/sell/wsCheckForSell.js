@@ -3,6 +3,7 @@ import {ws} from '../senders/index.js';
 import {purchases} from '../dataLoader/index.js';
 import {defaultSetting, formatItemFromOldToNew} from '../../helpers/index.js';
 import {sellingProcesses} from '../generalInfo/index.js';
+import chalk from 'chalk';
 
 /**
  * Проверка предметов на продажу из вебсокета
@@ -47,7 +48,7 @@ const wsCheckForSell = ({
                     });
                     
                     if (!formattedItem.fullName) {
-                        console.log(`Не удалось найти название предмета с nameId ${formattedItem.nameId}`);
+                        console.log(chalk.yellow(`Не удалось найти название предмета с nameId ${formattedItem.nameId}`));
                         continue;
                     }
                     
@@ -56,12 +57,12 @@ const wsCheckForSell = ({
                     }
                     
                     if (sellingProcesses.countProcesses(accountId) >= defaultSetting.maxCountParallelsSelling) {
-                        console.log(`Превышено кол-во одновременных процессов продажи (${sellingProcesses.countProcesses(accountId)})`);
+                        console.log(chalk.yellow(`Превышено кол-во одновременных процессов продажи (${sellingProcesses.countProcesses(accountId)})`));
                         break;
                     }
                     
                     if (sellingProcesses.isSelling(accountId, formattedItem.id)) {
-                        console.log(`Предмет ${formattedItem.fullName} уже в продаже`);
+                        console.log(chalk.yellow(`Предмет ${formattedItem.fullName} уже в продаже`));
                         continue;
                     }
                     
@@ -80,7 +81,7 @@ const wsCheckForSell = ({
                         sell({
                             items: [formattedItem],
                             isVirtual: true,
-                            cookie: cookie[accountId],
+                            cookie: cookie?.[accountId] || null,
                             accountId,
                         }).then(() =>
                             // Удаление процесса продажи
@@ -89,13 +90,13 @@ const wsCheckForSell = ({
                 }
             }
         };
-        
-        ws(cookie[requiredAccounts[0]], callback)
+    
+        ws(cookie?.[requiredAccounts[0]] || {oldCsm: true, accountId: requiredAccounts[0]}, callback)
             .finally(() =>
                 setTimeout(() =>
                     wsCheckForSell({cookie, requiredAccounts}), defaultSetting.delayReconnectWS));
     } catch (error) {
-        console.log('wsCheckForSell unexpected error:', error);
+        console.log(chalk.red.underline('wsCheckForSell unexpected error:'), error);
     }
 };
 
