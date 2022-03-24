@@ -158,7 +158,7 @@ export const myInventory = ({
                 }
 
                 for (const appId of appIdList) {
-                    console.log(`Загрузка инвентаря для пользователя ${accountId} игры ${appId}`);
+                    console.log(`Загрузка инвентаря для аккаунта ${accountId} игры ${appId}`);
                     const myInventory = await get(
                         `https://old.cs.money/${appId}/load_user_inventory`,
                         null,

@@ -110,6 +110,12 @@ const getCookies = {
      */
 
     async loadCookieSteam(details) {
+        const steamIdFromSettings = Object.entries(defaultSetting.steamAuthorizationData).find(entry =>
+            entry[1].accountName === details.accountName)?.[0];
+    
+        if (steamIdFromSettings) {
+            return steamIdFromSettings;
+        }
 
         return await new Promise((resolve, reject) => {
             steam.login(createDetails(details), (err, sessionID, cookie) => {

@@ -101,7 +101,7 @@ export const transactionsLoader = ({
         
         try {
             for (const accountId of requiredAccounts) {
-                console.log(`Загрузка транзакций для пользователя ${accountId}`);
+                console.log(`Загрузка транзакций для аккаунта ${accountId}`);
                 // Получение транзакций
                 const transactions = await get('https://old.cs.money/get_transactions', null, cookie || {oldCsm: true, accountId});
                 

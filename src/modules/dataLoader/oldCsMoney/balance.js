@@ -59,7 +59,7 @@ export const myBalance = ({
         
         try {
             for (const accountId of requiredAccounts) {
-                console.log(`Загрузка баланса для пользователя ${accountId}`);
+                console.log(`Загрузка баланса для аккаунта ${accountId}`);
                 // Получение баланса
                 const userInfo = await get('https://old.cs.money/user_info', null, cookie?.[accountId] || {oldCsm: true, accountId});
                     

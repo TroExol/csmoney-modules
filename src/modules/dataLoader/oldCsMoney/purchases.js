@@ -51,7 +51,7 @@ export const purchasesLoader = ({
         
         try {
             for (const accountId of requiredAccounts) {
-                console.log(`Загрузка покупок для пользователя ${accountId}`);
+                console.log(`Загрузка покупок для аккаунта ${accountId}`);
                 // Получение покупок и продаж
                 const purchases = await get('https://old.cs.money/get_purchases', null, cookie || {oldCsm: true, accountId});
                 
