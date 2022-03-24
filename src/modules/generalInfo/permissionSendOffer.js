@@ -6,6 +6,7 @@ const permissionSendOffer = {
     
     canSend (accountId) {
         if (!this.accounts[accountId] || Date.now() - this.accounts[accountId].startTime >= defaultSetting.badQueriesTime) {
+            this.accounts[accountId] = {};
             this.accounts[accountId].count = 0;
             this.accounts[accountId].startTime = Date.now();
         }
@@ -28,11 +29,15 @@ const permissionSendOffer = {
     },
 
     gotBanned (accountId) {
+        if (!this.accounts[accountId]) {
+            this.accounts[accountId] = {};
+        }
         this.accounts[accountId].banned = true;
     },
 
     increase (accountId) {
         if (!this.accounts[accountId]) {
+            this.accounts[accountId] = {};
             this.accounts[accountId].count = 0;
             this.accounts[accountId].startTime = Date.now();
         }
@@ -41,7 +46,10 @@ const permissionSendOffer = {
     },
     
     setTimeOut (accountId, min = 10) {
-
+        if (!this.accounts[accountId]) {
+            this.accounts[accountId] = {};
+        }
+        
         this.accounts[accountId].timeOut = true;
         console.log(chalk.yellow(`Перерыв для аккаунта ${accountId} на ${min} минут :(`));
 
