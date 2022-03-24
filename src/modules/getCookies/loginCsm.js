@@ -111,10 +111,11 @@ const getCookies = {
 
     async loadCookieSteam(details) {
 
-        return await new Promise(reslove => {
+        return await new Promise((resolve, reject) => {
             steam.login(createDetails(details), (err, sessionID, cookie) => {
                 if (err) {
-                    throw new Error('Не удалось получить cookie файлы Steam. Проверьте правильно ли был заполнен парамет details и попробуйте ещё раз.');
+                    reject('Не удалось получить cookie файлы Steam. Проверьте правильно ли были заполнены данные аккаунтов и попробуйте ещё раз.');
+                    return;
                 }
 
                 steam.getClientLogonToken((err, {steamID}) => {
@@ -136,7 +137,7 @@ const getCookies = {
                         cookie 
                     );
 
-                    reslove(steamID);
+                    resolve(steamID);
                 });
             });
         });
