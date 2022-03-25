@@ -1,6 +1,6 @@
 import {sell} from './index.js';
 import {purchases, itemStatus} from '../dataLoader/index.js';
-import {defaultSetting, formatItemFromOldToNew} from '../../helpers/index.js';
+import {defaultSetting, formatItemFromOldToNew, dateToString} from '../../helpers/index.js';
 import {sellingProcesses} from '../generalInfo/index.js';
 import chalk from 'chalk';
 
@@ -23,6 +23,7 @@ const checkForSell = ({
     
     try {
         for (const accountId of requiredAccounts) {
+            console.log(`Проверка предметов для продажи аккаунта ${accountId} от ${dateToString(new Date())}`);
             const items = purchases.getItemsInInventory(accountId);
             
             for (const item of items) {
