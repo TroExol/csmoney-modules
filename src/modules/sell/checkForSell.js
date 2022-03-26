@@ -1,7 +1,8 @@
 import {sell} from './index.js';
 import {purchases, itemStatus} from '../dataLoader/index.js';
-import {defaultSetting, formatItemFromOldToNew} from '../../helpers/index.js';
+import {defaultSetting, formatItemFromOldToNew, dateToString} from '../../helpers/index.js';
 import {sellingProcesses} from '../generalInfo/index.js';
+import chalk from 'chalk';
 
 /**
  * Проверка предметов на продажу
@@ -22,6 +23,7 @@ const checkForSell = ({
     
     try {
         for (const accountId of requiredAccounts) {
+            console.log(`Проверка предметов для продажи аккаунта ${accountId} от ${dateToString(new Date())}`);
             const items = purchases.getItemsInInventory(accountId);
             
             for (const item of items) {
@@ -35,7 +37,7 @@ const checkForSell = ({
                 });
                 
                 if (!formattedItem.fullName) {
-                    console.log(`Не удалось найти название предмета с nameId ${formattedItem.nameId}`);
+                    console.log(chalk.yellow(`Не удалось найти название предмета с nameId ${formattedItem.nameId}`));
                     continue;
                 }
                 
@@ -44,12 +46,12 @@ const checkForSell = ({
                 }
                 
                 if (sellingProcesses.countProcesses(accountId) >= defaultSetting.maxCountParallelsSelling) {
-                    console.log(`Превышено кол-во одновременных процессов продажи (${sellingProcesses.countProcesses(accountId)})`);
+                    console.log(chalk.yellow(`Превышено кол-во одновременных процессов продажи (${sellingProcesses.countProcesses(accountId)})`));
                     break;
                 }
     
                 if (sellingProcesses.isSelling(accountId, formattedItem.id)) {
-                    console.log(`Предмет ${formattedItem.fullName} уже в продаже`);
+                    console.log(chalk.yellow(`Предмет ${formattedItem.fullName} уже в продаже`));
                     continue;
                 }
     
@@ -68,7 +70,7 @@ const checkForSell = ({
                     sell({
                         items: [formattedItem],
                         isVirtual: true,
-                        cookie: cookie[accountId],
+                        cookie: cookie?.[accountId] || null,
                         accountId,
                     }).then(() =>
                         // Удаление процесса продажи
@@ -77,7 +79,7 @@ const checkForSell = ({
             }
         }
     } catch (error) {
-        console.log('checkForSell unexpected error:', error);
+        console.log(chalk.red.underline('checkForSell unexpected error:'), error);
     } finally {
         startReload();
     }

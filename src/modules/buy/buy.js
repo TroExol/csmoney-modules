@@ -1,6 +1,7 @@
 import {sendOffer} from '../sendOffer/index.js';
 import {replyToOffer} from '../replyToOffer/index.js';
 import {defaultSetting} from '../../helpers/index.js';
+import chalk from 'chalk';
 
 export const recursiveBuy = async(item, accountId, delay = 0, isVirtual = true) => {
     try {
@@ -36,7 +37,7 @@ export const recursiveBuy = async(item, accountId, delay = 0, isVirtual = true) 
             const confirmOffer = await replyToOffer({offerId, action: 'confirm', accountId});
 
             if (confirmOffer) {
-                console.log(`Куплен предмет: ${item.name}; Цена: ${item.cp || item.p}; Куплено с попытки: ${numberOfRequest}`);
+                console.log(chalk.green(`Куплен предмет: ${item.name}; Цена: ${item.cp || item.p}; Куплено с попытки: ${numberOfRequest}`));
                 return true;
             }
 
@@ -48,6 +49,6 @@ export const recursiveBuy = async(item, accountId, delay = 0, isVirtual = true) 
      
         
     } catch (error) {
-        console.log('recursiveBuy error:', error);
+        console.log(chalk.red.underline('recursiveBuy error:'), error);
     }
 };

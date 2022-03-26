@@ -2,17 +2,16 @@ import axios from 'axios';
 import {createOpenID, createHeaders} from './createData.js';
 
 /**
- * Получение cokie файлов для CSM. Подходит как для новой версии, так и для старой.
+ * Получение cookie файлов для CSM. Подходит как для новой версии, так и для старой.
  * @param {Object} param 
  * @param {String} param.urlAuth - Ссылка для начала авторизации на сайте.
  * @param {String} param.urlSite - Ссылка на сам сайт.
  * @param {String} param.steamCookie - Файлы cookie steam.
- * @param {String | Number} param.accountId - Id аккаунта Steam.
  * @param {String} [param.siteCookie] - Дополнительные cookie при авторизации.
  * @returns {Promise <String>} - Строка cookie файлов, разделённых ";".
  */
 
-export const getCookieCSM = async({urlAuth, urlSite, steamCookie, accountId, siteCookie}) => {
+export const getCookieCSM = async({urlAuth, urlSite, steamCookie, siteCookie}) => {
 
     const steamOpenidLogin = await axios(
         createHeaders({
@@ -23,11 +22,6 @@ export const getCookieCSM = async({urlAuth, urlSite, steamCookie, accountId, sit
             maxRedirects: 2
         })
     );
-    
-    // Проверяем прошла ли авторизация Steam.
-    if (!steamOpenidLogin.data.includes(accountId)) {
-        throw new Error(`Не удалось авторизоваться на ${urlSite}. SteamID: ${accountId}`);
-    }
 
     const openidInfo = createOpenID(steamOpenidLogin.data);
 
@@ -44,7 +38,7 @@ export const getCookieCSM = async({urlAuth, urlSite, steamCookie, accountId, sit
 
     urlAuth = csmOpenidLogin.headers.location;
     
-    // Максисальное количество редиректов в цикле
+    // Максимальное количество редиректов в цикле
     for (let maxRedirects = 0; maxRedirects < 10; maxRedirects++) {
         const response = await axios(
             createHeaders({

@@ -1,4 +1,4 @@
-import {recursiveBuy} from './buy';
+import {recursiveBuy} from './buy.js';
 
 export {
     recursiveBuy

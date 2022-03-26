@@ -1,5 +1,6 @@
 import {get} from '../../senders/index.js';
 import {defaultSetting} from '../../../helpers/index.js';
+import chalk from 'chalk';
 
 /**
  * Список названий предметов.
@@ -50,12 +51,13 @@ export const itemNamesLoader = ({
         
         try {
             for (const appId of appIdList) {
+                console.log(`Загрузка названий предметов для игры ${appId}`);
                 // Получение названий предмета
                 const response = await get(`https://old.cs.money/js/database-skins/library-${language}-${appId}.js`);
                 this.nameId[appId] = typeof response === 'string' ? JSON.parse(response.split(' = ')[1]) : {};
             }
         } catch (error) {
-            console.log('Ошибка при получении списка названий предметов CS:GO / DOTA2', error);
+            console.log(chalk.red.underline('Ошибка при получении списка названий предметов CS:GO / DOTA2'), error);
         } finally {
             startReload();
         }

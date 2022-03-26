@@ -1,4 +1,7 @@
 import WebSocket from 'ws';
+import {isObject} from '../../helpers/index.js';
+import {getCookies} from '../getCookies/index.js';
+import chalk from 'chalk';
 
 export const connectWS = ({
     WebSocket,
@@ -12,6 +15,10 @@ export const connectWS = ({
      */
     (cookie, callback) => new Promise((resolve, reject) => {
         try {
+            if (isObject(cookie)) {
+                cookie = getCookies.getStrCookie(cookie);
+            }
+    
             // Открытие WS
             const ws = new WebSocket('wss://ws.cs.money/ws', {
                 headers: {
@@ -31,7 +38,7 @@ export const connectWS = ({
             ws.on('error', reject);
             ws.on('close', resolve);
         } catch (error) {
-            console.log(`Произошла непредвиденная ошибка: ${error.message}`);
+            console.log(chalk.red.underline(`Произошла непредвиденная ошибка: ${error.message}`));
             reject(error);
         }
     });

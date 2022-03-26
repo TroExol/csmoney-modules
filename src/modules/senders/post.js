@@ -19,18 +19,16 @@ export const post = ({
             if (isObject(cookie)) {
                 cookie = getCookies.getStrCookie(cookie);
             }
-
+            
             const {data} = await axios.post(path, params, {
                 headers: getHeaders(cookie),
             });
             
             const {error} = isObject(data) ? data : getOldResponseError(data);
-
+            
             if (error && (error === 6 || error === 19)) {
-                const workСookie = await getCookies.checkCookie({accountId: cookie.accountId});
-                if (!workСookie) {
-                    return await post(path, params, cookie);
-                }
+                await getCookies.checkCookie({accountId: cookie.accountId});
+                return await post({axios, getHeaders})(path, params, cookie);
             }
             
             return data;

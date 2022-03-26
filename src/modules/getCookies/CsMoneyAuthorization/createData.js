@@ -47,7 +47,7 @@ const createHeaders = params => {
         'baseURL': params.url,
         'headers': {
             'Connection': 'keep-alive',
-            'referrer': params.referrer ? params.referrer : 'https://steamcommunity.com/',
+            'Referrer': params.referrer ? params.referrer : 'https://steamcommunity.com/',
             'Cookie': params.cookie
         },
         'maxRedirects': params.maxRedirects ? params.maxRedirects : 0,

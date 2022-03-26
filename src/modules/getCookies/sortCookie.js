@@ -12,12 +12,11 @@ export const sortCookie = (necessary, listCookie) => {
     return necessary.reduce((processedCookie, typeCookie) => {
         for (const cookie of listCookie) {
             if (!listCookie.join('').includes(typeCookie)) {
-                throw new Error(`Не хватает cookie файлов. \nОтсутсевует файл: ${typeCookie}. \nСписок всех необходимых cookie: ${necessary}.`);
+                throw new Error(`Не хватает cookie файлов. \nОтсутствует файл: ${typeCookie}. \nСписок всех необходимых cookie: ${necessary}.`);
             }
 
             if (cookie.includes(typeCookie)) {
                 processedCookie[typeCookie] = decodeURI(cookie.split('=')[1]);
-                continue;
             }
         }
         return processedCookie;

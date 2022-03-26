@@ -1,7 +1,7 @@
 /**
- * // Разбитие стакнутых предметов на new.cs.money
- * @param {object} item - Предмет
- * @param {number} appId - Id игры
+ * Разбитие стакнутых предметов на new.cs.money
+ * @param {Object} item - Предмет
+ * @param {Number} appId - Id игры
  */
 const unstackItems = (item, appId) => {
     const listItems = [];

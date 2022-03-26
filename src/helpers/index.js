@@ -5,6 +5,7 @@ import unstackItems from './unstackItems.js';
 import getOldResponseError from './getOldResponseError.js';
 import formatItemFromOldToNew from './formatItemFromOldToNew.js';
 import formatItemFromNewToOld from './formatItemFromNewToOld.js';
+import dateToString from './dateToString.js';
 
 export {
     isObject,
@@ -14,4 +15,5 @@ export {
     getOldResponseError,
     formatItemFromOldToNew,
     formatItemFromNewToOld,
+    dateToString,
 };

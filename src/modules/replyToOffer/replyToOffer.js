@@ -1,5 +1,6 @@
 import {post} from '../senders/index.js';
 import {permissionSendOffer} from '../generalInfo/index.js';
+import chalk from 'chalk';
 
 export const replyToOffer = ({post}) =>
     async ({offerId, action, cookie, accountId}) => {
@@ -15,14 +16,14 @@ export const replyToOffer = ({post}) =>
             
             // Не удалось подтвердить
             if (!response.status) {
-                console.log('replyToOffer response on error:', response);
+                console.log(chalk.red.underline('replyToOffer response on error:'), response);
                 permissionSendOffer.increase(accountId);
                 return false;
             }
             
             return true;
         } catch (error) {
-            console.log('replyToOffer unexpected error:', error);
+            console.log(chalk.red.underline('replyToOffer unexpected error:'), error);
             return false;
         }
     };

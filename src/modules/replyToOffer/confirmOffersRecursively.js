@@ -1,6 +1,7 @@
 import {defaultSetting} from '../../helpers/index.js';
 import {transactions} from '../../modules/dataLoader/index.js';
 import replyToOffer from './replyToOffer.js';
+import chalk from 'chalk';
 
 export const confirmOffersRecursively = ({
     transactions,
@@ -31,7 +32,7 @@ export const confirmOffersRecursively = ({
                 }
             }
         } catch (error) {
-            console.log('confirmOffers unexpected error:', error);
+            console.log(chalk.red.underline('confirmOffers unexpected error:'), error);
         } finally {
             startReload();
         }
