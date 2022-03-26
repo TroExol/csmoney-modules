@@ -21,6 +21,10 @@ const defaultSetting = {
      */
     isBuyOnWhileRefreshBots: {},
     /**
+     * @type {Object<String, Boolean>} - Включена ли продажа для аккаунтов.
+     */
+    isSellOn: {},
+    /**
      * @type {String[]} - Предметы, которые не покупать.
      */
     blacklist: [],
@@ -29,36 +33,37 @@ const defaultSetting = {
      */
     appIdList: [570, 730],
     /**
-     * @type {String} - Выбор языка для предметов. (ru || en)
+     * @type {'ru' | 'en'} - Выбор языка для предметов.
      */
     languageName: 'en',
     /**
-     * @type {Number} - Допустимый предел оверстока.
+     * @type {Object<String, Number>} - Допустимый предел оверстока.
      */
-    limitOverstock: -6,
+    limitOverstock: {},
     /**
      * @type {Object<String, Number>} - Комиссия аккаунтов на продажу.
      */
     commission: {},
     /**
-     * @type {{notOverstock: Number, overstock: Number}} - Минимальный профит при покупке.
+     * @type {Object<String, Number>} - Минимальный профит при покупке не в оверстоке.
      */
-    profit: {
-        notOverstock: 10,
-        overstock: 16,
-    },
+    profitNotOverstock: {},
+    /**
+     * @type {Object<String, Number>} - Минимальный профит при покупке в оверстоке.
+     */
+    profitOverstock: {},
     /**
      * @type {Number} - Задержка перед подключением к WS (в миллисекундах).
      */
     delayReconnectWS: 30000,
     /**
-     * @type {Number} - Максимальное количество параллельных покупок для аккаунта.
+     * @type {Object<String, Number>} - Максимальное количество параллельных покупок для аккаунта.
      */
-    maxCountParallelsBuying: 1,
+    maxCountParallelsBuying: {},
     /**
-     * @type {Number} - Максимальное количество параллельных продаж для аккаунта.
+     * @type {Object<String, Number>} - Максимальное количество параллельных продаж для аккаунта.
      */
-    maxCountParallelsSelling: 2,
+    maxCountParallelsSelling: {},
     /**
      * @type {Number} - Длительность рекурсивной покупки (в миллисекундах).
      */
@@ -121,28 +126,28 @@ const defaultSetting = {
         }
     },
     /** Установка значений по умолчанию.
-    * @param { object? } settings - Настройки
-    * @param { Array? } settings.appIdList - Массив с id нужных игр.
-    * @param { String? } settings.languageName - Выбор языка для предметов. (ru || en)
-    *
-    * @param { object? } settings.repeatLoad - Настройки обновления данных.
-    *
-    * @param { object? } settings.repeatLoad.myInventory - Настройки обновления инвентаря пользователя.
-    * @param { Boolean } settings.repeatLoad.myInventory.status - Включить / Выключить повторное обновление.
-    * @param { Number } settings.repeatLoad.myInventory.delay - Выбор языка для предметов. (ru || en)
-    *
-    * @param { object? } settings.repeatLoad.itemNames - Настройки обновления name id.
-    * @param { Boolean } settings.repeatLoad.itemNames.status - Включить / Выключить повторное обновление.
-    * @param { Number } settings.repeatLoad.itemNames.delay - Время задержки перед повторным обновлением.
-    *
-    * @param { object? } settings.repeatLoad.checkStatus - Настройки обновления статусов предметов.
-    * @param { Boolean } settings.repeatLoad.checkStatus.status - Включить / Выключить повторное обновление.
-    * @param { Number } settings.repeatLoad.checkStatus.delay - Время задержки перед повторным обновлением.
-    *
-    * @param { object? } settings.repeatLoad.balance - Настройки обновления баланса.
-    * @param { Boolean } settings.repeatLoad.balance.status - Включить / Выключить повторное обновление.
-    * @param { Number } settings.repeatLoad.balance.delay - Время задержки перед повторным обновлением.
-    */
+     * @param { object? } settings - Настройки
+     * @param { Array? } settings.appIdList - Массив с id нужных игр.
+     * @param { String? } settings.languageName - Выбор языка для предметов. (ru || en)
+     *
+     * @param { object? } settings.repeatLoad - Настройки обновления данных.
+     *
+     * @param { object? } settings.repeatLoad.myInventory - Настройки обновления инвентаря пользователя.
+     * @param { Boolean } settings.repeatLoad.myInventory.status - Включить / Выключить повторное обновление.
+     * @param { Number } settings.repeatLoad.myInventory.delay - Выбор языка для предметов. (ru || en)
+     *
+     * @param { object? } settings.repeatLoad.itemNames - Настройки обновления name id.
+     * @param { Boolean } settings.repeatLoad.itemNames.status - Включить / Выключить повторное обновление.
+     * @param { Number } settings.repeatLoad.itemNames.delay - Время задержки перед повторным обновлением.
+     *
+     * @param { object? } settings.repeatLoad.checkStatus - Настройки обновления статусов предметов.
+     * @param { Boolean } settings.repeatLoad.checkStatus.status - Включить / Выключить повторное обновление.
+     * @param { Number } settings.repeatLoad.checkStatus.delay - Время задержки перед повторным обновлением.
+     *
+     * @param { object? } settings.repeatLoad.balance - Настройки обновления баланса.
+     * @param { Boolean } settings.repeatLoad.balance.status - Включить / Выключить повторное обновление.
+     * @param { Number } settings.repeatLoad.balance.delay - Время задержки перед повторным обновлением.
+     */
     set (settings) {
         // Изменяем нужные настройки
         Object.entries(settings).forEach(([settingKey, settingData]) => {
@@ -152,7 +157,9 @@ const defaultSetting = {
             } else {
                 // Изменяем внутри нужных настроек
                 Object.entries(settingData).forEach(([entrySettingKey, entrySettingData]) => {
-                    if (settingKey === 'repeatLoad' && (!entrySettingData.status || !entrySettingData.delay)) {
+                    if (settingKey === 'repeatLoad'
+                        && ([null, undefined].includes(entrySettingData.status)
+                            || [null, undefined].includes(entrySettingData.delay))) {
                         throw new Error('Для настройки repeatLoad необходимо установить поля status и delay');
                     }
                     if (!this[settingKey]) {

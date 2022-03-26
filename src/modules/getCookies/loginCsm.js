@@ -31,9 +31,9 @@ const getCookies = {
      * @returns {String} - За один запрос, восвращает строку файлов cookie для одного сайта и для одного аккаунта.
      */
     getStrCookie({accountId, oldCsm, newCsm}) {
-
+        
         const site = oldCsm ? 'oldCsm' : (newCsm) ? 'newCsm' : 'steam';
-
+        
         return Object.entries(this.accounts[accountId][site]).reduce((strCookie, [typeCookie, cookie]) => {
             return strCookie ? `${strCookie}${typeCookie}=${cookie};` : `${typeCookie}=${cookie};`;
         }, undefined);
@@ -51,9 +51,9 @@ const getCookies = {
                     newCsm: this.getStrCookie({accountId: cookies.accountId, newCsm: true})
                 };
             }
-
+            
             for (const site in cookies) {
-     
+                
                 const {headers} = await axios(
                     createHeaders({
                         url: url[site],
@@ -64,41 +64,43 @@ const getCookies = {
                 
                 const setCookie = headers['set-cookie'].join('');
                 const isLoggedIn = setCookie.includes('isLoggedIn=true') || setCookie.includes('registered_user=true');
-
+                
                 if (isLoggedIn) {
                     return true;
                 }
-
+                
                 await this.load();
                 console.log(chalk.green('Файлы cookie были обновлены'));
             }
         } catch (error) {
-            console.log(chalk.red.underline('checkCookie: Отсутствуют файлы cookie'), error);
+            console.log(chalk.red.underline('checkCookie: Cookie устарели'), error.message);
+            await this.load();
+            console.log(chalk.green('Файлы cookie были обновлены'));
         }
     },
-
+    
     /**
      * Загрузка cookie файлов для CSM.
      * @param {Array} detailsList - Массив объектов details, с данными Steam аккаунтов.
      * @param {Object} receiveCookie - Объект с парраметрами для какой версии CSM нужно плучать cookie.
      */
     async load(detailsList = defaultSetting.getAccountDetails(), receiveCookie = defaultSetting.receiveCookie) {
-
+        
         for (const details of detailsList) {
-
+            
             // Получаем cookie файлы и записываем в переменную SteamId.
             const accountId = await this.loadCookieSteam(details);
             
             if (receiveCookie.oldCsm) {
                 await this.loadCookieOldCsm(accountId);
             }
-
+            
             if (receiveCookie.newCsm) {
                 await this.loadCookieNewCsm(accountId);
             }
         }
     },
-
+    
     /**
      * Авторизация в Steam, для получения cookie файлов.
      * @param {Object} details
@@ -108,24 +110,24 @@ const getCookies = {
      * @param {Object} [details.disableMobile] - Нужно для получения всех cookie.
      * @returns {Promise<Number>} - Возвращает Id аккаунта Steam.
      */
-
+    
     async loadCookieSteam(details) {
         const steamIdFromSettings = Object.entries(defaultSetting.steamAuthorizationData).find(entry =>
             entry[1].accountName === details.accountName)?.[0];
-    
+        
         if (steamIdFromSettings) {
             return steamIdFromSettings;
         }
-
+        
         return await new Promise((resolve, reject) => {
             steam.login(createDetails(details), (err, sessionID, cookie) => {
                 if (err) {
                     reject('Не удалось получить cookie файлы Steam. Проверьте правильно ли были заполнены данные аккаунтов и попробуйте ещё раз.');
                     return;
                 }
-
+                
                 steam.getClientLogonToken((err, {steamID}) => {
-
+                    
                     if (!defaultSetting.steamAuthorizationData[steamID]) {
                         defaultSetting.set({
                             steamAuthorizationData: {
@@ -133,16 +135,16 @@ const getCookies = {
                             }
                         });
                     }
-
+                    
                     if (!this.accounts[steamID]) {
                         this.accounts[steamID] = {};
                     }
-
+                    
                     this.accounts[steamID].steam = sortCookie(
                         ['steamMachineAuth', 'steamRememberLogin', 'sessionid', 'steamLoginSecure'],
-                        cookie 
+                        cookie
                     );
-
+                    
                     resolve(steamID);
                 });
             });
@@ -158,8 +160,8 @@ const getCookies = {
             this.accounts[accountId].oldCsm = sortCookie(
                 ['username', 'csgo_ses', 'steamid', 'thirdparty_token', 'csrf', 'sellerid', 'isLoggedIn'],
                 await getCookieCSM({
-                    urlAuth: 'https://auth.dota.trade/login?redirectUrl=https://old.cs.money&callbackUrl=https://old.cs.money/login', 
-                    urlSite: 'https://old.cs.money/', 
+                    urlAuth: 'https://auth.dota.trade/login?redirectUrl=https://old.cs.money&callbackUrl=https://old.cs.money/login',
+                    urlSite: 'https://old.cs.money/',
                     accountId,
                     steamCookie: cookie || this.getStrCookie({accountId}),
                     siteCookie: 'currency=USD;pro_version=true;language=en;'
@@ -179,8 +181,8 @@ const getCookies = {
             this.accounts[accountId].newCsm = sortCookie(
                 ['csgo_ses', 'username', 'support_token', 'steamid', 'visitor_id', 'registered_user'],
                 await getCookieCSM({
-                    urlAuth: 'https://auth.dota.trade/login?redirectUrl=https://cs.money/ru/csgo/trade&callbackUrl=https://cs.money/login', 
-                    urlSite: 'https://cs.money/', 
+                    urlAuth: 'https://auth.dota.trade/login?redirectUrl=https://cs.money/ru/csgo/trade&callbackUrl=https://cs.money/login',
+                    urlSite: 'https://cs.money/',
                     accountId: accountId,
                     steamCookie: cookie || this.getStrCookie({accountId}),
                     siteCookie: 'currency=USD;pro_version=true;language=en;'
