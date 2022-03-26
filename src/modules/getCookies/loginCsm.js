@@ -73,9 +73,7 @@ const getCookies = {
                 console.log(chalk.green('Файлы cookie были обновлены'));
             }
         } catch (error) {
-            console.log(chalk.red.underline('checkCookie: Cookie устарели'), error.message);
-            await this.load();
-            console.log(chalk.green('Файлы cookie были обновлены'));
+            console.log(chalk.red.underline('checkCookie: Отсутствуют файлы cookie'), error.message);
         }
     },
     
