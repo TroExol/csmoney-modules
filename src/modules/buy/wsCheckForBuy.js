@@ -97,7 +97,7 @@ const wsCheckForBuy = ({
                     buyingProcesses.add(accountId, processId, [formattedItem.id]);
         
                     (() => {
-                        console.log(`Начало покупки предмета ${formattedItem.fullName}`);
+                        console.log(chalk.green(`Начало покупки предмета ${formattedItem.fullName}`));
                         
                         const innerProcessId = processId;
                         const innerItemIds = [formattedItem.id];
