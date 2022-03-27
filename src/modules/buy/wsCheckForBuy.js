@@ -1,6 +1,6 @@
 import {buy} from './index.js';
 import {ws} from '../senders/index.js';
-import {itemStatus} from '../dataLoader/index.js';
+import {itemStatus, purchases} from '../dataLoader/index.js';
 import {dateToString, defaultSetting, formatItemFromOldToNew} from '../../helpers/index.js';
 import {buyingProcesses} from '../generalInfo/index.js';
 import chalk from 'chalk';
@@ -76,6 +76,13 @@ const wsCheckForBuy = ({
                         continue;
                     }
     
+                    const countSameItemsInInventory = purchases.getItemsInInventory(accountId).reduce((count, item) =>
+                        item.name_id === formattedItem.nameId, 0);
+                    if (countSameItemsInInventory >= defaultSetting.maxCountSameItems[accountId]) {
+                        console.log(chalk.yellow(`В инвентаре максимальное кол-во предметов ${formattedItem.fullName}`));
+                        continue;
+                    }
+                    
                     if (buyingProcesses.countProcesses(accountId) >= defaultSetting.maxCountParallelsBuying[accountId]) {
                         console.log(chalk.yellow(`Превышено кол-во одновременных процессов покупки (${buyingProcesses.countProcesses(accountId)})`));
                         break;
@@ -83,11 +90,6 @@ const wsCheckForBuy = ({
     
                     if (buyingProcesses.isBuying(accountId, formattedItem.id)) {
                         console.log(chalk.yellow(`Предмет ${formattedItem.fullName} уже в покупке`));
-                        continue;
-                    }
-                    
-                    if (buyingProcesses.wasInBuying(accountId, formattedItem.id)) {
-                        console.log(chalk.yellow(`Предмет ${formattedItem.fullName} уже был в процессе покупки на аккаунте ${accountId}`));
                         continue;
                     }
                     

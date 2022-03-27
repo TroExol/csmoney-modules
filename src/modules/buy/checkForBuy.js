@@ -1,5 +1,5 @@
 import {buy} from './index.js';
-import {botInventory, itemStatus} from '../dataLoader/index.js';
+import {botInventory, itemStatus, purchases} from '../dataLoader/index.js';
 import {defaultSetting, dateToString, formatItemFromOldToNew} from '../../helpers/index.js';
 import {buyingProcesses} from '../generalInfo/index.js';
 import chalk from 'chalk';
@@ -72,10 +72,16 @@ const checkForBuy = async ({
                     }
                     
                     console.log(chalk.green(`Выгодный предмет ${formattedItem.fullName}; Цена: ${formattedItem.price}; Скидка: ${formattedItem.overprice}`));
-    
-    
+                    
                     if (defaultSetting.blacklist.some(black => formattedItem.fullName.includes(black))) {
                         console.log(chalk.yellow(`Предмет ${formattedItem.fullName} находится в черном списке`));
+                        continue;
+                    }
+                    
+                    const countSameItemsInInventory = purchases.getItemsInInventory(accountId).reduce((count, item) =>
+                        item.name_id === formattedItem.nameId, 0);
+                    if (countSameItemsInInventory >= defaultSetting.maxCountSameItems[accountId]) {
+                        console.log(chalk.yellow(`В инвентаре максимальное кол-во предметов ${formattedItem.fullName}`));
                         continue;
                     }
                     

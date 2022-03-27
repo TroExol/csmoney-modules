@@ -65,6 +65,10 @@ const defaultSetting = {
      */
     maxCountParallelsSelling: {},
     /**
+     * @type {Object<String, Number>} - Максимальное количество одинаковых предметов в инвентаре для аккаунта.
+     */
+    maxCountSameItems: {},
+    /**
      * @type {Number} - Длительность рекурсивной покупки (в миллисекундах).
      */
     buyRecursivelyDuration: 35000,
