@@ -28,7 +28,7 @@ export const purchasesLoader = ({
      * @returns {Object[] | undefined}
      */
     getItemsInInventory (accountId) {
-        return this.accounts[accountId]?.filter(item => item.status === 'inventory');
+        return (this.accounts[accountId]?.filter(item => item.status === 'inventory') || []);
     },
     
     /**

@@ -34,7 +34,7 @@ const sendOffer = async ({items, isVirtual, isBuy, cookie, accountId}) => {
                 permissionSendOffer.setTimeOut();
             }
 
-            console.log(chalk.red.underline('sendOffer response on error:'), response);
+            console.log(chalk.red.underline('Не удалось отправить обмен. Ошибка:'), response);
             permissionSendOffer.increase(accountId);
             return false;
         }

@@ -1,6 +1,6 @@
 import {defaultSetting} from '../../helpers/index.js';
 import {sendOffer} from './index.js';
-import {permissionSendOffer} from '../generalInfo/index.js';
+import {permissionSendOffer, reservedItems} from '../generalInfo/index.js';
 import chalk from 'chalk';
 
 /**
@@ -38,6 +38,11 @@ const sendOfferRecursively = async ({
         const startTime = Date.now();
         
         while (Date.now() - startTime <= recursivelyDuration) {
+            if (isBuy && items.some(item => reservedItems.isReserved(item.id))) {
+                console.log(chalk.yellow('В списке для покупки есть зарезервированный другим пользователем предмет'));
+                break;
+            }
+            
             const iterationStartTime = Date.now();
             
             const offerId = await sendOffer({items, isVirtual, isBuy, cookie, accountId});

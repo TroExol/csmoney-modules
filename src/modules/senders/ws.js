@@ -10,15 +10,16 @@ export const connectWS = ({
     /**
      * Подключение к websocket old.cs.money
      * @param {string} cookie - Куки
-     * @param {(string) => void} callback - Обработка сообщений от WS
+     * @param {(string) => void} onMessage - Обработка сообщений от WS
+     * @param {(string) => void} onOpen - Обработка открытия WS
      * @returns {Promise<any>} - Результат подключения (происходит при закрытии подключения)
      */
-    (cookie, callback) => new Promise((resolve, reject) => {
+    (cookie, onMessage, onOpen) => new Promise((resolve, reject) => {
         try {
             if (isObject(cookie)) {
                 cookie = getCookies.getStrCookie(cookie);
             }
-    
+            
             // Открытие WS
             const ws = new WebSocket('wss://ws.cs.money/ws', {
                 headers: {
@@ -27,14 +28,18 @@ export const connectWS = ({
                 },
             });
             
-            ws.on('open', () => console.log('WS открыт...'));
+            ws.on('open', () => {
+                onOpen
+                    ? onOpen()
+                    : console.log('WS открыт...');
+            });
             
             ws.on('message', message => {
                 const response = JSON.parse(message);
                 
-                callback(response);
+                onMessage(response);
             });
-    
+            
             ws.on('error', reject);
             ws.on('close', resolve);
         } catch (error) {

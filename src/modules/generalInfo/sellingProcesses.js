@@ -22,7 +22,7 @@ const sellingProcesses = {
      * @returns {boolean}
      */
     isSelling (accountId, id) {
-        return Boolean(this.accounts[accountId].items?.includes(id));
+        return Boolean(this.accounts[accountId]?.items?.includes(id));
     },
     
     /**

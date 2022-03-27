@@ -12,8 +12,8 @@ export const itemNamesLoader = ({
     defaultSetting,
 }) => ({
     nameId: {
-        730: undefined,
-        570: undefined,
+        730: {},
+        570: {},
     },
     
     /**

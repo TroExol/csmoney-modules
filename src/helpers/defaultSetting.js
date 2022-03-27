@@ -123,6 +123,10 @@ const defaultSetting = {
         checkForSell: {
             status: true,
             delay: 1.5 * 60000,
+        },
+        checkForBuy: {
+            status: true,
+            delay: 1.5 * 60000,
         }
     },
     /** Установка значений по умолчанию.

@@ -22,7 +22,17 @@ const buyingProcesses = {
      * @returns {boolean}
      */
     isBuying (accountId, id) {
-        return Boolean(this.accounts[accountId].items?.includes(id));
+        return Boolean(this.accounts[accountId]?.buyingItems?.includes(id));
+    },
+    
+    /**
+     * Проверка отправлялись ли запросы на покупку данного предмета
+     * @param {String} accountId - Id аккаунта
+     * @param {Number} id - Id предмета
+     * @returns {boolean}
+     */
+    wasInBuying (accountId, id) {
+        return Boolean(this.accounts[accountId]?.items?.includes(id));
     },
     
     /**
@@ -35,10 +45,12 @@ const buyingProcesses = {
         if (!this.accounts[accountId]) {
             this.accounts[accountId] = {
                 processes: [],
+                buyingItems: [],
                 items: [],
             };
         }
         this.accounts[accountId].processes.push(id);
+        this.accounts[accountId].buyingItems.push(...itemIds);
         this.accounts[accountId].items.push(...itemIds);
     },
     
@@ -54,7 +66,7 @@ const buyingProcesses = {
         }
         
         this.accounts[accountId].processes = this.accounts[accountId].processes.filter(processId => processId !== id);
-        this.accounts[accountId].items = this.accounts[accountId].items.filter(itemId => !itemIds.includes(itemId));
+        this.accounts[accountId].buyingItems = this.accounts[accountId].buyingItems.filter(itemId => !itemIds.includes(itemId));
     },
 };
 
