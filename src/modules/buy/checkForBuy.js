@@ -100,7 +100,7 @@ const checkForBuy = async ({
                     buyingProcesses.add(accountId, processId, [formattedItem.id]);
                     
                     (() => {
-                        console.log(chalk.green(`Начало покупки предмета ${formattedItem.fullName}`));
+                        console.log(chalk.green.underline(`Начало покупки предмета ${formattedItem.fullName}`));
                         
                         const innerProcessId = processId;
                         const innerItemIds = [formattedItem.id];
