@@ -5,10 +5,14 @@ import {
     defaultSetting,
     getOldResponseError,
     formatItemFromOldToNew,
-    formatItemFromNewToOld
+    formatItemFromNewToOld,
 } from './src/helpers/index.js';
 
-import {recursiveBuy} from './src/modules/buy/index.js';
+import {
+    buy,
+    checkForBuy,
+    wsCheckForBuy,
+} from './src/modules/buy/index.js';
 
 import {
     balance,
@@ -18,13 +22,14 @@ import {
     salesHistory,
     botInventory,
     transactions,
-    purchases
+    purchases,
 } from './src/modules/dataLoader/index.js';
 
 import {
     sellingProcesses,
     buyingProcesses,
-    permissionSendOffer
+    permissionSendOffer,
+    reservedItems,
 } from './src/modules/generalInfo/index.js';
 
 import {getCookies} from './src/modules/getCookies/index.js';
@@ -37,18 +42,18 @@ import {
 import {
     sell,
     checkForSell,
-    wsCheckForSell
+    wsCheckForSell,
 } from './src/modules/sell/index.js';
 
 import {
     get,
     post,
-    ws
+    ws,
 } from './src/modules/senders/index.js';
 
 import {
     sendOffer,
-    sendOfferRecursively
+    sendOfferRecursively,
 } from './src/modules/sendOffer/index.js';
 
 export {
@@ -59,7 +64,9 @@ export {
     getOldResponseError,
     formatItemFromOldToNew,
     formatItemFromNewToOld,
-    recursiveBuy,
+    buy,
+    checkForBuy,
+    wsCheckForBuy,
     balance,
     itemNames,
     myInventory,
@@ -71,6 +78,7 @@ export {
     sellingProcesses,
     buyingProcesses,
     permissionSendOffer,
+    reservedItems,
     getCookies,
     replyToOffer,
     confirmOffersRecursively,
@@ -81,5 +89,5 @@ export {
     post,
     ws,
     sendOffer,
-    sendOfferRecursively
+    sendOfferRecursively,
 };

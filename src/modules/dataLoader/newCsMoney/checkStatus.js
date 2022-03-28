@@ -20,7 +20,7 @@ export const itemStatus = ({
      * @param {number} limitOverstock - Допустимый предел оверстока.
      * @returns {boolean}
      */
-    check (itemName, appId, limitOverstock = defaultSetting.limitOverstock) {
+    check (itemName, appId, limitOverstock) {
         return (!this.status[appId][itemName])
             ? true
             : this.status[appId][itemName] !== 'Unavailable' && this.status[appId][itemName] >= limitOverstock;
@@ -59,17 +59,14 @@ export const itemStatus = ({
                 if ((!overstocks || !Array.isArray(overstocks)) || (!unavailable || !Array.isArray(unavailable))) {
                     continue;
                 }
+    
+                for (const item of overstocks) {
+                    this.status[appId][item.market_hash_name] = item.overstock_difference;
+                }
                 
                 for (const item of unavailable) {
                     this.status[appId][item.market_hash_name] = 'Unavailable';
                 }
-                
-                for (const item of overstocks) {
-                    if (!this.status[appId][item.market_hash_name]) {
-                        this.status[appId][item.market_hash_name] = item.overstock_difference;
-                    }
-                }
-                
             }
         } catch (error) {
             console.log(chalk.red.underline('Ошибка при обновлении статусов предметов CS:GO, DOTA2'), error);

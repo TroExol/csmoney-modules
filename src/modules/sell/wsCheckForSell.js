@@ -1,7 +1,7 @@
 import {sell} from './index.js';
 import {ws} from '../senders/index.js';
 import {purchases} from '../dataLoader/index.js';
-import {defaultSetting, formatItemFromOldToNew} from '../../helpers/index.js';
+import {dateToString, defaultSetting, formatItemFromOldToNew} from '../../helpers/index.js';
 import {sellingProcesses} from '../generalInfo/index.js';
 import chalk from 'chalk';
 
@@ -20,6 +20,8 @@ const wsCheckForSell = ({
             if (response.event !== 'update_list_overstock') {
                 return;
             }
+    
+            console.log(`Получено сообщение о вышедших из оверстока предметах от ${dateToString(new Date())}`);
             
             /**
              * Названия предметов, вышедших из оверстока
@@ -56,7 +58,7 @@ const wsCheckForSell = ({
                         continue;
                     }
                     
-                    if (sellingProcesses.countProcesses(accountId) >= defaultSetting.maxCountParallelsSelling) {
+                    if (sellingProcesses.countProcesses(accountId) >= defaultSetting.maxCountParallelsSelling[accountId]) {
                         console.log(chalk.yellow(`Превышено кол-во одновременных процессов продажи (${sellingProcesses.countProcesses(accountId)})`));
                         break;
                     }
@@ -75,6 +77,8 @@ const wsCheckForSell = ({
                     
                     // Замыкание для того, чтобы по окончании продажи удалились правильные id
                     (() => {
+                        console.log(`Начало продажи предмета ${formattedItem.fullName}`);
+                        
                         const innerProcessId = processId;
                         const innerItemIds = [formattedItem.id];
                         
@@ -91,7 +95,8 @@ const wsCheckForSell = ({
             }
         };
     
-        ws(cookie?.[requiredAccounts[0]] || {oldCsm: true, accountId: requiredAccounts[0]}, callback)
+        ws(cookie?.[requiredAccounts[0]] || {oldCsm: true, accountId: requiredAccounts[0]}, callback,
+            () => console.log('Открыт WS для проверки продажи...'))
             .finally(() =>
                 setTimeout(() =>
                     wsCheckForSell({cookie, requiredAccounts}), defaultSetting.delayReconnectWS));

@@ -65,6 +65,10 @@ const defaultSetting = {
      */
     maxCountParallelsSelling: {},
     /**
+     * @type {Object<String, Number>} - Максимальное количество одинаковых предметов в инвентаре для аккаунта.
+     */
+    maxCountSameItems: {},
+    /**
      * @type {Number} - Длительность рекурсивной покупки (в миллисекундах).
      */
     buyRecursivelyDuration: 35000,
@@ -121,6 +125,10 @@ const defaultSetting = {
             delay: 60000,
         },
         checkForSell: {
+            status: true,
+            delay: 1.5 * 60000,
+        },
+        checkForBuy: {
             status: true,
             delay: 1.5 * 60000,
         }

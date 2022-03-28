@@ -14,7 +14,7 @@ export const botInventoryLoader = ({
         try {
             console.log(`Загрузка инвентаря cs.money игры ${appId}`);
             // Получение названий предмета
-            const items = await get(`https://old.cs.money/${appId}/load_bots_inventory`);
+            const items = await get(`https://old.cs.money/${appId}/load_sell_mode_inventory`);
             
             // Не удалось получить названия предметов
             if (!Array.isArray(items)) {

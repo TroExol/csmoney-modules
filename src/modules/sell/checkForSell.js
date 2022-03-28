@@ -45,7 +45,7 @@ const checkForSell = ({
                     continue;
                 }
                 
-                if (sellingProcesses.countProcesses(accountId) >= defaultSetting.maxCountParallelsSelling) {
+                if (sellingProcesses.countProcesses(accountId) >= defaultSetting.maxCountParallelsSelling[accountId]) {
                     console.log(chalk.yellow(`Превышено кол-во одновременных процессов продажи (${sellingProcesses.countProcesses(accountId)})`));
                     break;
                 }
@@ -64,6 +64,8 @@ const checkForSell = ({
     
                 // Замыкание для того, чтобы по окончании продажи удалились правильные id
                 (() => {
+                    console.log(`Начало продажи предмета ${formattedItem.fullName}`);
+                    
                     const innerProcessId = processId;
                     const innerItemIds = [formattedItem.id];
                     
