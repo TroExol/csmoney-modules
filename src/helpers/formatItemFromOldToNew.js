@@ -7,10 +7,10 @@ import {itemNames} from '../modules/dataLoader/index.js';
  * @returns {{price: number, appId: number, nameId: number, fullName: string, id: number, isVirtual: boolean, overprice: number, hasHighDemand: boolean}}
  */
 const formatItemFromOldToNew = (appId, item) => ({
-    id: item.id[0],
+    id: Number(item.id[0]),
     nameId: item.o,
     appId,
-    isVirtual: item.vi?.[0] || false,
+    isVirtual: Boolean(item.vi?.[0]) || false,
     price: item.cp || item.p,
     fullName: itemNames.get(appId, item.o),
     overprice: item.pd,
