@@ -6,15 +6,12 @@ import {defaultSetting} from '../../helpers/index.js';
 import {sortCookie} from './sortCookie.js';
 import chalk from 'chalk';
 
-
 const steam = new SteamCommunity;
-
 
 const url = {
     oldCsm: 'https://old.cs.money',
-    newCsm: 'https://cs.money'
+    newCsm: 'https://cs.money',
 };
-
 
 const getCookies = {
     accounts: {},
@@ -48,7 +45,7 @@ const getCookies = {
             if (cookies.accountId) {
                 cookies = {
                     oldCsm: this.getStrCookie({accountId: cookies.accountId, oldCsm: true}),
-                    newCsm: this.getStrCookie({accountId: cookies.accountId, newCsm: true})
+                    newCsm: this.getStrCookie({accountId: cookies.accountId, newCsm: true}),
                 };
             }
             
@@ -58,8 +55,8 @@ const getCookies = {
                     createHeaders({
                         url: url[site],
                         cookie: cookies[site],
-                        maxRedirects: 2
-                    })
+                        maxRedirects: 2,
+                    }),
                 );
                 
                 const setCookie = headers['set-cookie'].join('');
@@ -69,7 +66,7 @@ const getCookies = {
                     return true;
                 }
                 
-                await this.load();
+                await this.load(true);
                 console.log(chalk.green('Файлы cookie были обновлены'));
             }
         } catch (error) {
@@ -79,15 +76,17 @@ const getCookies = {
     
     /**
      * Загрузка cookie файлов для CSM.
+     * @param {Boolean} [updateCookieSteam] - Нужно ли обновлять куки стима.
      * @param {Array} detailsList - Массив объектов details, с данными Steam аккаунтов.
      * @param {Object} receiveCookie - Объект с парраметрами для какой версии CSM нужно плучать cookie.
      */
-    async load(detailsList = defaultSetting.getAccountDetails(), receiveCookie = defaultSetting.receiveCookie) {
+    async load(updateCookieSteam = true, detailsList = defaultSetting.getAccountDetails(),
+        receiveCookie = defaultSetting.receiveCookie) {
         
         for (const details of detailsList) {
             
             // Получаем cookie файлы и записываем в переменную SteamId.
-            const accountId = await this.loadCookieSteam(details);
+            const accountId = await this.loadCookieSteam(details, updateCookieSteam);
             
             if (receiveCookie.oldCsm) {
                 await this.loadCookieOldCsm(accountId);
@@ -106,14 +105,14 @@ const getCookies = {
      * @param {Object} details.password - Пароль.
      * @param {Object} details.twoFactorCode - "shared_secret" из maFiles.
      * @param {Object} [details.disableMobile] - Нужно для получения всех cookie.
+     * @param {Boolean} [updateCookieSteam] - Нужно ли обновлять куки.
      * @returns {Promise<Number>} - Возвращает Id аккаунта Steam.
      */
+    async loadCookieSteam(details, updateCookieSteam = true) {
+        if (!updateCookieSteam) {
+            const steamIdFromSettings = Object.entries(defaultSetting.steamAuthorizationData).find(entry =>
+                entry[1].accountName === details.accountName)?.[0];
     
-    async loadCookieSteam(details) {
-        const steamIdFromSettings = Object.entries(defaultSetting.steamAuthorizationData).find(entry =>
-            entry[1].accountName === details.accountName)?.[0];
-        
-        if (steamIdFromSettings) {
             return steamIdFromSettings;
         }
         
@@ -129,8 +128,8 @@ const getCookies = {
                     if (!defaultSetting.steamAuthorizationData[steamID]) {
                         defaultSetting.set({
                             steamAuthorizationData: {
-                                [steamID]: details
-                            }
+                                [steamID]: details,
+                            },
                         });
                     }
                     
@@ -140,7 +139,7 @@ const getCookies = {
                     
                     this.accounts[steamID].steam = sortCookie(
                         ['steamMachineAuth', 'steamRememberLogin', 'sessionid', 'steamLoginSecure'],
-                        cookie
+                        cookie,
                     );
                     
                     resolve(steamID);
@@ -162,8 +161,8 @@ const getCookies = {
                     urlSite: 'https://old.cs.money/',
                     accountId,
                     steamCookie: cookie || this.getStrCookie({accountId}),
-                    siteCookie: 'currency=USD;pro_version=true;language=en;'
-                })
+                    siteCookie: 'currency=USD;pro_version=true;language=en;',
+                }),
             );
         } catch (error) {
             console.log(chalk.red.underline('Ошибка при получении Cookie файлов old.cs.money!'), error.message);
@@ -183,13 +182,13 @@ const getCookies = {
                     urlSite: 'https://cs.money/',
                     accountId: accountId,
                     steamCookie: cookie || this.getStrCookie({accountId}),
-                    siteCookie: 'currency=USD;pro_version=true;language=en;'
-                })
+                    siteCookie: 'currency=USD;pro_version=true;language=en;',
+                }),
             );
         } catch (error) {
             console.log(chalk.red.underline('Ошибка при получении Cookie файлов cs.money!'), error.message);
         }
-    }
+    },
 };
 
 export default getCookies;

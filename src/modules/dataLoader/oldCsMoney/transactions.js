@@ -32,7 +32,7 @@ export const transactionsLoader = ({
         await this.load(cookie, {status: false, delay: 0}, [accountId]);
         
         if (!this.accounts[accountId]) {
-            return undefined;
+            return [];
         }
         
         const offerIds = [];
